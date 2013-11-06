@@ -35,4 +35,10 @@ echo "Pulling latest AskTheCrowds from github ..."
 wget https://github.com/MaxHorstmann/AskTheCrowdsServer/archive/$ARCHIVE2
 unzip $ARCHIVE2
 
-/opt/dart/dart/dart-sdk/bin/dart
+
+echo "Starting AskTheCrowds server..."
+cd AskTheCrowdsServer-master/src/AskTheCrowdsServer
+/opt/dart/dart/dart-sdk/bin/pub get
+/opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowdsServer-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart
+
+
