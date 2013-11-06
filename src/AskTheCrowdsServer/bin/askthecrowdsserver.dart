@@ -1,13 +1,10 @@
-import "package:express/express.dart";
+import 'dart:io';
 
 void main() {
-  print("Starting up server...");
-  
-  var app = new Express()
-    ..get('/', (ctx){
-      ctx.render('index', {'title': 'Home'});
+  HttpServer.bind('127.0.0.1', 80).then((server) {
+    server.listen((HttpRequest request) {
+      request.response.write('Hello, world');
+      request.response.close();
     });
-  
-  app.listen("127.0.0.1", 8000);
-  
+  });
 }
