@@ -2,6 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
+  config.vm.define "Ask the Crowds Server" do
+  end
   config.vm.box = "Ubuntu Server 12.04 amd64"
   #
   # THE URL FROM WHERE THE 'CONFIG.VM.BOX' BOX WILL BE FETCHED IF IT
