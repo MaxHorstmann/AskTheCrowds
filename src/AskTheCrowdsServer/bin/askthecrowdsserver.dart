@@ -6,6 +6,10 @@ void main() {
       request.response.write('Hello, world. Ask the Crowds server here.');
       request.response.close();
       print(new DateTime.now());
+      print(request.connectionInfo.remoteAddress);
+      print(request.method);
+      print(request.headers.toString());
+      print("--------------");      
     });
   });
   
