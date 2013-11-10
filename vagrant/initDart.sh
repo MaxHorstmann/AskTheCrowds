@@ -39,6 +39,7 @@ unzip $ARCHIVE2
 echo "Starting AskTheCrowds server..."
 cd AskTheCrowdsServer-master/src/AskTheCrowdsServer
 /opt/dart/dart/dart-sdk/bin/pub get
-/opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowdsServer-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart
+nohup /opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowdsServer-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart &
+
 
 
