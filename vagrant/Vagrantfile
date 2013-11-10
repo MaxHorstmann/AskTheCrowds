@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Forward these ports
   config.vm.network :forwarded_port, guest: 6379, host: 6379
-  config.vm.network :forwarded_port, guest: 8977, host: 8977
+  config.vm.network :forwarded_port, guest: 80, host: 8977
 
   # Set virtual machine memory size
   config.vm.provider :virtualbox do |vbox|
