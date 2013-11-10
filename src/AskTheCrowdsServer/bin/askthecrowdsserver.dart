@@ -2,7 +2,7 @@ import "package:redis_client/redis_client.dart";
 import 'dart:io';
 
 void main() {
-  var connectionStringRedis = "127.0.0.1:6379/37";
+  var connectionStringRedis = "127.0.0.1:6379/0";
 
   HttpServer.bind(InternetAddress.ANY_IP_V4, 8977).then((server) {
     server.listen((HttpRequest request) {
