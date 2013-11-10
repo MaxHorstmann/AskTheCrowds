@@ -14,7 +14,7 @@ fi
 
 if [ ! -d dart ]
 then
-  unzip $ARCHIVE
+  unzip -q $ARCHIVE
 fi
 
 mkdir -p /opt/atc
