@@ -25,28 +25,47 @@ void main() {
       }
       
       if ((request.uri.path == "/register") && (request.method == "POST")) {
-        var data = request.toString();
-        Map user = JSON.decode(data);
-        var userGuid = user["userGuid"];
+        request.fold(new BytesBuilder(), (builder, data) => builder..add(data))
+         .then((builder) {
+           
+           var data = builder.takeBytes();
+           var json = UTF8.decode(data);
+           Map user = JSON.decode(json);
+           var userGuid = user["userGuid"];
+                      
+           RedisClient.connect(connectionStringRedis)
+             .then((RedisClient client) {
+               client.sismember("users", userGuid).then((bool alreadyExists) {
+                 if (alreadyExists)  {
+                   request.response.statusCode = 400;
+                   request.response.headers.contentType = ContentType.parse("text/json"); 
+                   request.response.write("{ result = 'already exists' }");
+                   request.response.close();
+                 }
+                 else {
+                   client.sadd("users", userGuid).then((_) {
+                     request.response.statusCode = 201;
+                     request.response.headers.contentType = ContentType.parse("text/json"); 
+                     request.response.write("{ result = 'success' }");
+                     request.response.close();
+                   });            
+                 }
+               });
+             });        
+         });
+        
+        return;
+      }
+      
+      if (request.uri.path == "/users") {
         RedisClient.connect(connectionStringRedis)
           .then((RedisClient client) {
-            client.sismember("users", userGuid).then((bool alreadyExists) {
-              if (alreadyExists)  {
-                request.response.statusCode = 400;
-                request.response.headers.contentType = ContentType.parse("text/json"); 
-                request.response.write("{ result = 'already exists' }");
-                request.response.close();
-              }
-              else {
-                client.sadd("users", userGuid).then((_) {
-                request.response.statusCode = 201;
-                request.response.headers.contentType = ContentType.parse("text/json"); 
-                request.response.write("{ result = 'success' }");
-                request.response.close();
-                });            
-              }
+            client.smembers("users").then((users) {
+              request.response.statusCode = 200;
+              request.response.write(users);
+              request.response.close();
             });
-          });        
+          });
         return;
       }
       
