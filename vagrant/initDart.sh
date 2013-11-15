@@ -32,14 +32,14 @@ then
 fi
 
 echo "Pulling latest AskTheCrowds from github ..."
-wget https://github.com/MaxHorstmann/AskTheCrowdsServer/archive/$ARCHIVE2
+wget https://github.com/MaxHorstmann/AskTheCrowds/archive/$ARCHIVE2
 unzip $ARCHIVE2
 
 
 echo "Starting AskTheCrowds server..."
-cd AskTheCrowdsServer-master/src/AskTheCrowdsServer
+cd AskTheCrowds-master/src/AskTheCrowdsServer
 /opt/dart/dart/dart-sdk/bin/pub get
-nohup /opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowdsServer-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart &
+nohup /opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowds-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart &
 
 
 
