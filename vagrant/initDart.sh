@@ -17,8 +17,8 @@ then
   unzip -q $ARCHIVE
 fi
 
-cp /vagrant/atc-server.conf /etc/init
-cp /opt/dart/dart/dart-sdk/bin/dart /usr/bin
+cp -f /vagrant/atc-server.conf /etc/init 
+cp -f /opt/dart/dart/dart-sdk/bin/dart /usr/bin
 
 
 
