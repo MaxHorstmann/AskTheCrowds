@@ -22,5 +22,7 @@ Vagrant.configure("2") do |config|
   # Start up
   config.vm.provision :shell, :path => "initRedis.sh"
   config.vm.provision :shell, :path => "initDart.sh"
+  config.vm.provision :shell, :path => "initAtcServer.sh"
+  
 
 end

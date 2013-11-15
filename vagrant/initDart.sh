@@ -17,29 +17,8 @@ then
   unzip -q $ARCHIVE
 fi
 
-mkdir -p /opt/atc
-cd /opt/atc
-
-ARCHIVE2=master.zip
-if [ -e $ARCHIVE2 ]
-then
-  rm $ARCHIVE2
-fi
-
-if [ -e AskTheCrowdsServer-master ]
-then
-  rm -rf AskTheCrowdsServer-master
-fi
-
-echo "Pulling latest AskTheCrowds from github ..."
-wget https://github.com/MaxHorstmann/AskTheCrowds/archive/$ARCHIVE2
-unzip $ARCHIVE2
-
-
-echo "Starting AskTheCrowds server..."
-cd AskTheCrowds-master/src/AskTheCrowdsServer
-/opt/dart/dart/dart-sdk/bin/pub get
-nohup /opt/dart/dart/dart-sdk/bin/dart /opt/atc/AskTheCrowds-master/src/AskTheCrowdsServer/bin/askthecrowdsserver.dart &
+cp /vagrant/atc-server.conf /etc/init
+cp /opt/dart/dart/dart-sdk/bin/dart /usr/bin
 
 
 
