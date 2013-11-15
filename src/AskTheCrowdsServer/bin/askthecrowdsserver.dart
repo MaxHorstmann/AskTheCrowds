@@ -81,6 +81,10 @@ void main() {
         return;
       }
       
+      if (request.uri.path == "/throw") {
+        throw "this is a test exception";
+      }
+      
       request.response.statusCode = 404;
       request.response.write("404 not found");
       request.response.close();      
