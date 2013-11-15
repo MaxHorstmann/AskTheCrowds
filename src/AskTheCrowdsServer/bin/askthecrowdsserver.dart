@@ -82,6 +82,8 @@ void main() {
       }
       
       if (request.uri.path == "/throw") {
+        request.response.write("exception thrown");
+        request.response.close();
         throw "this is a test exception";
       }
       
