@@ -31,7 +31,18 @@ class Poll
 
 class User
 {
+  static String RedisSet = "Users";
+  
   String UserGuid;
   DateTime Created;
 }
 
+class Result
+{
+  bool Success;
+  Map toJson() { 
+    Map map = new Map();
+    map["Success"] = Success;
+    return map;
+  } 
+}

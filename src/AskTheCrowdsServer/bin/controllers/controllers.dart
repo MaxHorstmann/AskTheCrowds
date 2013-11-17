@@ -62,6 +62,7 @@ class Controllers
             request.fold(new BytesBuilder(), (builder, data) => builder..add(data))
               .then((builder) {
                 
+                // TODO deserialize to object
                 var data = builder.takeBytes();
                 var json = UTF8.decode(data);
                 Map user = JSON.decode(json);
@@ -70,20 +71,13 @@ class Controllers
                 RedisClient.connect(_connectionStringRedis)
                   .then((RedisClient client) {
                     client.sismember("users", userGuid).then((bool alreadyExists) {
-                      if (alreadyExists)  {
-                        request.response.statusCode = 400;
-                        request.response.headers.contentType = ContentType.parse("text/json"); 
-                        request.response.write("{ result = 'already exists' }");
-                        request.response.close();
+                      var result = new Result()
+                        ..Success = !alreadyExists;
+                      if (!alreadyExists) 
+                      {
+                        client.sadd("users", userGuid);
                       }
-                      else {
-                        client.sadd("users", userGuid).then((_) {
-                          request.response.statusCode = 201;
-                          request.response.headers.contentType = ContentType.parse("text/json"); 
-                          request.response.write("{ result = 'success' }");
-                          request.response.close();
-                        });            
-                      }
+                      sendJson(request, result);                      
                     });
                   });        
               });            
