@@ -70,12 +70,12 @@ class Controllers
                 
                 RedisClient.connect(_connectionStringRedis)
                   .then((RedisClient client) {
-                    client.sismember("users", userGuid).then((bool alreadyExists) {
+                    client.sismember(User.Key, userGuid).then((bool alreadyExists) {
                       var result = new Result()
                         ..Success = !alreadyExists;
                       if (!alreadyExists) 
                       {
-                        client.sadd("users", userGuid);
+                        client.sadd(User.Key, userGuid);
                       }
                       sendJson(request, result);                      
                     });

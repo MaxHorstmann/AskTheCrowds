@@ -31,7 +31,7 @@ class Poll
 
 class User
 {
-  static String RedisSet = "Users";
+  static String Key = "Users";
   
   String UserGuid;
   DateTime Created;
