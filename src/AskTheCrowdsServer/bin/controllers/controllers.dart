@@ -39,6 +39,7 @@ class Controllers
         var path = request.uri.path;
         print("$now: $path");
         
+        
         switch (path){
           case "/": sendContent(request, "Ask the Crowds server"); return;
           
@@ -47,7 +48,7 @@ class Controllers
             ..Id = 1
             ..CategoryId = 5
             ..Language = "en"
-            ..Created = new DateTime.now()
+            ..Created = new DateTime.now().millisecondsSinceEpoch
             ..DurationHours = 5
             ..Question = "Where should I go on my next vacation?"
             ..Options = [ "Hawaii", "New York" ];
@@ -70,12 +71,12 @@ class Controllers
                 
                 RedisClient.connect(_connectionStringRedis)
                   .then((RedisClient client) {
-                    client.sismember(User.Key, userGuid).then((bool alreadyExists) {
+                    client.sismember("users", userGuid).then((bool alreadyExists) {
                       var result = new Result()
                         ..Success = !alreadyExists;
                       if (!alreadyExists) 
                       {
-                        client.sadd(User.Key, userGuid);
+                        client.sadd("users", userGuid);
                       }
                       sendJson(request, result);                      
                     });
