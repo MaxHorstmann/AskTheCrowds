@@ -71,6 +71,7 @@ class Controllers
                 
                 RedisClient.connect(_connectionStringRedis)
                   .then((RedisClient client) {
+                    
                     client.sismember("users", userGuid).then((bool alreadyExists) {
                       var result = new Result()
                         ..Success = !alreadyExists;
