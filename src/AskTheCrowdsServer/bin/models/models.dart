@@ -4,15 +4,14 @@ import 'Serializable.dart';
 
 class Poll extends Object with Serializable
 {
-  int Id;
+  String PollGuid;
   String UserGuid;
   int CategoryId;
-  int Created; // millisecondsSinceEpoch
+  DateTime Created; 
   int DurationHours;
   String Language;
   String Question;
   List<String> Options;
-  List<int> Results;
  }
 
 class User extends Object with Serializable
@@ -25,5 +24,5 @@ class User extends Object with Serializable
 
 class Result extends Object with Serializable
 {
-  bool Success;
+  String ResultPayload;
 }
