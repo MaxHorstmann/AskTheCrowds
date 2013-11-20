@@ -14,7 +14,14 @@ abstract class Serializable {
     decls.forEach((dm) {
       var key = MirrorSystem.getName(dm.simpleName);
       var val = im.getField(dm.simpleName).reflectee;
-      map[key] = val;
+      if (val is DateTime)
+      {
+        map[key] = val.millisecondsSinceEpoch;
+      }
+      else
+      {
+        map[key] = val;
+      }
     });
 
     return map;

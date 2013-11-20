@@ -4,3 +4,4 @@ author: Max Horstmann
 description: Server back-end for "Ask the Crowds" app
 dependencies:
   redis_client: '>=0.1.9'
+  uuid: any

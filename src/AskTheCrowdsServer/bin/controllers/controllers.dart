@@ -3,11 +3,13 @@ library controllers;
 import 'dart:io';
 import 'dart:convert';
 import "../models/models.dart";
+import "../services/services.dart";
 import "package:redis_client/redis_client.dart";
 
 class Controllers
 {
   String _connectionStringRedis;
+  Services _services = new Services();
   
   Controllers(this._connectionStringRedis);
 
@@ -20,12 +22,18 @@ class Controllers
   
   void sendJson(HttpRequest request, Object payload, [ int statusCode = 200 ])
   {
+    var json = JSON.encode(payload);
+    sendJsonRaw(request,json,statusCode);
+  }  
+  
+  void sendJsonRaw(HttpRequest request, String json, [ int statusCode = 200 ])
+  {
     request.response.statusCode = statusCode;
     request.response.headers.contentType = ContentType.parse("text/json");
-    var json = JSON.encode(payload);
     request.response.write(json);        
     request.response.close();
-  }   
+  }  
+  
   
   void sendPageNotFound(HttpRequest request)
   {
@@ -56,10 +64,19 @@ class Controllers
             return;
             
           case "/api/users":            
-            if (request.method != "POST")
-            {
-              sendPageNotFound(request); return;
-            }            
+            if (request.method != "POST")  { sendPageNotFound(request); return;  }
+            var newUser = _services.CreateNewUser();
+            var json = JSON.encode(newUser);
+            RedisClient.connect(_connectionStringRedis)
+              .then((RedisClient client) {
+                var key = "userGuid:" + newUser.UserGuid;
+                client.set(key, json);              
+              });            
+            sendJsonRaw(request, json);
+            return;
+
+   
+          case "/some/POST":   // TODO
             request.fold(new BytesBuilder(), (builder, data) => builder..add(data))
               .then((builder) {
                 
@@ -82,8 +99,8 @@ class Controllers
                       sendJson(request, result);                      
                     });
                   });        
-              });            
-              return;     
+              });         
+              return;
               
           default: sendPageNotFound(request); return;
         }

@@ -19,6 +19,8 @@ class User extends Object with Serializable
 {
   String UserGuid;
   DateTime Created;
+  DateTime LastRequest;
+  String LastIP;
 }
 
 class Result extends Object with Serializable
