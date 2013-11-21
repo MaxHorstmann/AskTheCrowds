@@ -5,6 +5,7 @@ import 'dart:convert';
 import "../models/models.dart";
 import "../services/services.dart";
 import "package:redis_client/redis_client.dart";
+import 'package:http_server/http_server.dart';
 
 class Controllers
 {
@@ -51,6 +52,18 @@ class Controllers
         switch (path){
           case "/": sendContent(request, "Ask the Crowds server"); return;
           
+          case "/api/users":            
+            if (request.method != "POST")  { sendPageNotFound(request); return;  }
+            var newUser = _services.CreateNewUser();
+            var json = JSON.encode(newUser);
+            RedisClient.connect(_connectionStringRedis)
+              .then((RedisClient client) {
+                var key = "userGuid:" + newUser.UserGuid;
+                client.set(key, json);              
+              });            
+            sendJsonRaw(request, json);
+            return;
+            
           case "/api/polls": 
             if (request.method == "POST")  
             {
@@ -118,22 +131,22 @@ class Controllers
             }
             
             sendPageNotFound(request); 
-            return;  
-
-            
+            return;              
             
 
-          case "/api/users":            
+          case "/api/votes":            
             if (request.method != "POST")  { sendPageNotFound(request); return;  }
-            var newUser = _services.CreateNewUser();
-            var json = JSON.encode(newUser);
-            RedisClient.connect(_connectionStringRedis)
-              .then((RedisClient client) {
-                var key = "userGuid:" + newUser.UserGuid;
-                client.set(key, json);              
-              });            
-            sendJsonRaw(request, json);
+            HttpBodyHandler.processRequest(request).then((HttpBody body) {
+              // http://blog.sethladd.com/2013/09/forms-http-servers-and-polymer-with-dart.html
+              
+              
+
+            });            
+
+            
             return;
+            
+            
 
    
           default: sendPageNotFound(request); return;
