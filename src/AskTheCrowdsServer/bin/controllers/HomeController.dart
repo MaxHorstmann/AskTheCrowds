@@ -6,6 +6,9 @@ import "BaseController.dart";
 
 class HomeController extends BaseController
 {
+  
+  HomeController(String _redisConnectionString) : super(_redisConnectionString);
+  
   // Route = '/'
   void Index(HttpRequest request)
   {

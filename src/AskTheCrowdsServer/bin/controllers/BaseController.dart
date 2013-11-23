@@ -2,9 +2,17 @@ library BaseController;
 
 import 'dart:io';
 import 'dart:convert';
+import "../services/services.dart";
+
 
 class BaseController
 {
+  
+  Services services = new Services();
+  String connectionStringRedis;
+
+  BaseController(this.connectionStringRedis);
+  
   void sendContent(HttpRequest request, String content, [ int statusCode = 200 ])
   {
     request.response.statusCode = statusCode;
