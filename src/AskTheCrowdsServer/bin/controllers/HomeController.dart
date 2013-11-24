@@ -10,9 +10,10 @@ class HomeController extends BaseController
   HomeController(String _redisConnectionString) : super(_redisConnectionString);
   
   // Route = '/'
-  void Index(HttpRequest request)
+  bool Index(HttpRequest request)
   {
     sendContent(request, "Ask the Crowds server");
+    return true;
   }
 
   

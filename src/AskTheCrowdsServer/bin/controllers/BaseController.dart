@@ -5,7 +5,7 @@ import 'dart:convert';
 import "../services/services.dart";
 
 
-class BaseController
+abstract class BaseController
 {
   
   Services services = new Services();

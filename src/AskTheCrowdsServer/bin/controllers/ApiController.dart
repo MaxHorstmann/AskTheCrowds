@@ -13,9 +13,9 @@ class ApiController extends BaseController
   ApiController(String _redisConnectionString) : super(_redisConnectionString);
 
 
-  void Users(HttpRequest request)
+  bool Users(HttpRequest request)
   {
-      if (request.method != "POST")  { sendPageNotFound(request); return;  }
+      if (request.method != "POST")  { return false;  }
       var newUser = services.CreateNewUser();
       var json = JSON.encode(newUser);
       RedisClient.connect(connectionStringRedis)
@@ -24,9 +24,10 @@ class ApiController extends BaseController
           client.set(key, json);              
         });            
       sendJsonRaw(request, json);
+      return true;
   }
 
-  void Polls(HttpRequest request)
+  bool Polls(HttpRequest request)
   {
     if (request.method == "POST")  
     {
@@ -60,7 +61,7 @@ class ApiController extends BaseController
                     var result = new Result()
                     ..ResultPayload = "User not found";
                     sendJson(request,result,400);
-                    return;
+                    return true;
                   }
                   var key = "pollGuid:" + poll.PollGuid;
                   var json = JSON.encode(poll);
@@ -69,7 +70,7 @@ class ApiController extends BaseController
                     ..ResultPayload = poll.PollGuid;
                     sendJson(request,result);
                   });
-                  return;                          
+                  return true;                          
                 });
               
             })
@@ -77,11 +78,11 @@ class ApiController extends BaseController
                 var result = new Result()
                 ..ResultPayload = "could not connect to Redis";
                 sendJson(request, result, 500);
-                return;                      
+                return true;                      
               });
           
         });        
-      return;
+      return true;
     }
     
     if (request.method == "GET")  
@@ -94,11 +95,10 @@ class ApiController extends BaseController
       ..Question = "Where should I go on my next vacation?"
       ..Options = [ "Hawaii", "New York" ];
       sendJson(request, [newPoll, newPoll]);                        
-      return;
+      return true;
     }
     
-    sendPageNotFound(request); 
-    return;              
+    return false;           
   }
   
   

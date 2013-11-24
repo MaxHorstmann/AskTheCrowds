@@ -1,11 +1,49 @@
 import 'dart:io';
-import "controllers/controllers.dart";
+import "controllers/HomeController.dart";
+import "controllers/ApiController.dart";
+
+typedef bool Handler(HttpRequest request);
 
 void main() {
-  String connectionStringRedis = "127.0.0.1:6379/0";
-  var controllers = new Controllers(connectionStringRedis);
-  HttpServer.bind(InternetAddress.ANY_IP_V4, 800).then(controllers.listen); 
+  
+  String _connectionStringRedis = "127.0.0.1:6379/0";
+  
+  HttpServer.bind(InternetAddress.ANY_IP_V4, 80).then((HttpServer server) {
+    
+    var routeTable = new Map<String, Handler>();    
+    var homeController = new HomeController(_connectionStringRedis);
+    var apiController = new ApiController(_connectionStringRedis);
+    
+    routeTable["/"] = homeController.Index;
+    routeTable["/api/users"] = apiController.Users;
+    routeTable["/api/polls"] = apiController.Polls;
+    
+    server.listen((HttpRequest request) {
+      
+      var now = new DateTime.now();
+      var path = request.uri.path;
+      print("$now: $path");
+      
+      var routeFound = false;
+      routeTable.keys.forEach((String pattern) 
+      { 
+        if ((!routeFound) && (path == pattern)) // TODO check patterns with placeholders 
+        {
+          routeFound = routeTable[pattern](request);
+        }
+      });
+      
+      if (!routeFound) {
+        request.response.write("404 not found");
+        request.response.statusCode = 404;
+        request.response.close();
+      }
+    });
+    
   var now = new DateTime.now();
   print("$now: listing....");
+  });
+  
+  
 }
 
