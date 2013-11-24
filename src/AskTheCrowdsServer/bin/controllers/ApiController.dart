@@ -2,6 +2,7 @@ library ApiController;
 
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 import "../models/models.dart";
 import "BaseController.dart";
 import "package:redis_client/redis_client.dart";
@@ -84,7 +85,19 @@ class ApiController extends BaseController
         else {
           redisClient.get(key).then((String value) {
             var poll = new Poll.fromJSON(value);
-            sendJson(request, poll);                        
+            poll.Votes=new List<int>.filled(poll.Options.length, 0);
+            var futures = new List<Future<int>>();
+            for (var i=0;i<poll.Options.length; i++) {
+              var voteKey = key + ":votes:" + i.toString();
+              var votesFuture = redisClient.scard(voteKey);
+              futures.add(votesFuture);
+              votesFuture.then((int card) {
+                poll.Votes[i]=card; 
+              });
+            }
+            Future.wait(futures).then((_) { 
+              sendJson(request, poll);
+              });                        
           });
         }
       });

@@ -14,6 +14,7 @@ class Poll extends Object with Serializable
   String Language;
   String Question;
   List<String> Options;
+  List<int> Votes;
   
   Poll();
   Poll.fromJSON(json)
