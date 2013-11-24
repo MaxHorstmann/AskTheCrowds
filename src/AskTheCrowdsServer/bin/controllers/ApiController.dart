@@ -70,9 +70,17 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("pollGuid"))
       {
-        // TODO admin only
         redisClient.keys("pollGuid:*").then((List<String> pollGuids){
-          sendContent(request, pollGuids.join('\n'));
+          var polls = new List<Poll>();
+          var futures = new List<Future<Poll>>();
+          pollGuids.forEach((String pollGuid) {
+            var pollFuture = GetPoll(pollGuid);
+            pollFuture.then((Poll p) { 
+              polls.add(p);
+              });
+            futures.add(pollFuture);
+          });
+          Future.wait(futures).then((_) => sendJson(request, polls));
         });
         return true;
       }
@@ -83,28 +91,31 @@ class ApiController extends BaseController
           this.sendPageNotFound(request); 
         }        
         else {
-          redisClient.get(key).then((String value) {
-            var poll = new Poll.fromJSON(value);
-            poll.Votes=new List<int>.filled(poll.Options.length, 0);
-            var futures = new List<Future<int>>();
-            for (var i=0;i<poll.Options.length; i++) {
-              var voteKey = key + ":votes:" + i.toString();
-              var votesFuture = redisClient.scard(voteKey);
-              futures.add(votesFuture);
-              votesFuture.then((int card) {
-                poll.Votes[i]=card; 
-              });
-            }
-            Future.wait(futures).then((_) { 
-              sendJson(request, poll);
-              });                        
-          });
+          GetPoll(key).then((Poll poll) => sendJson(request, poll));
         }
       });
       return true;
     }
     
     return false;           
+  }
+  
+  Future<Poll> GetPoll(String key)
+  {
+    return redisClient.get(key).then((String value) {
+      var poll = new Poll.fromJSON(value);
+      poll.Votes=new List<int>.filled(poll.Options.length, 0);
+      var futures = new List<Future<int>>();
+      for (var i=0;i<poll.Options.length; i++) {
+        var voteKey = key + ":votes:" + i.toString();
+        var votesFuture = redisClient.scard(voteKey);
+        futures.add(votesFuture);
+        votesFuture.then((int card) {
+          poll.Votes[i]=card; 
+        });
+      }
+      return poll;
+    });
   }
   
   bool Votes(HttpRequest request)
