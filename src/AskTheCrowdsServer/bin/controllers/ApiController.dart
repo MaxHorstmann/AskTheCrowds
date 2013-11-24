@@ -35,10 +35,7 @@ class ApiController extends BaseController
         var newUser = new User.CreateNew();
         var json = JSON.encode(newUser);
         var key = "userGuid:" + newUser.UserGuid;
-        redisClient.set(key, json).then((_)
-            {
-              sendJsonRaw(request, json);
-            });
+        redisClient.set(key, json).then((_) => sendJsonRaw(request, json));
         return true;      
       }
       
@@ -55,19 +52,13 @@ class ApiController extends BaseController
         redisClient.exists(userKey).then((bool exists){
           if (!exists)
           {
-            var result = new Result()
-            ..ResultPayload = "User not found";
-            sendJson(request,result,400);
+            sendJson(request,new Result("UserGuid not found"),400);
           }
           else
           {
             var key = "pollGuid:" + poll.PollGuid;
             var json = JSON.encode(poll);
-            redisClient.set(key, json).then((_){
-              var result = new Result()
-              ..ResultPayload = poll.PollGuid;
-              sendJson(request,result);
-            });
+            redisClient.set(key, json).then((_) => sendJson(request,new Result(poll.PollGuid)));
           }
         });        
       });

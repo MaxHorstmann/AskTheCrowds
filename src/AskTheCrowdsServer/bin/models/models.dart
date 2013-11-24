@@ -50,5 +50,8 @@ class User extends Object with Serializable
 
 class Result extends Object with Serializable
 {
-  String ResultPayload;
+  String Payload;
+  
+  Result(this.Payload);
+  
 }
