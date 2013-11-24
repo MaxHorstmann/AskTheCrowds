@@ -57,7 +57,7 @@ class ApiController extends BaseController
           }
           else
           {
-            var key = "pollGuid:" + poll.PollGuid;
+            var key = "pollGuid:" + poll.PollGuid + ":poll";
             var json = JSON.encode(poll);
             redisClient.set(key, json).then((_) => sendJson(request,new Result(poll.PollGuid)));
           }
@@ -70,7 +70,8 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("pollGuid"))
       {
-        redisClient.keys("pollGuid:*").then((List<String> pollGuids){
+        // TODO use a list of current polls instead of "keys"
+        redisClient.keys("pollGuid:*:poll").then((List<String> pollGuids){
           var polls = new List<Poll>();
           var futures = new List<Future<Poll>>();
           pollGuids.forEach((String pollGuid) {
@@ -85,7 +86,7 @@ class ApiController extends BaseController
         return true;
       }
       var pollGuid = request.uri.queryParameters["pollGuid"];
-      var key = "pollGuid:" + pollGuid.toString();
+      var key = "pollGuid:" + pollGuid.toString() + ":poll";
       redisClient.exists(key).then((bool exists) {
         if (!exists) { 
           this.sendPageNotFound(request); 
@@ -114,7 +115,7 @@ class ApiController extends BaseController
           poll.Votes[i]=card; 
         });
       }
-      return poll;
+      return Future.wait(futures).then((_) => poll);      
     });
   }
   
@@ -132,7 +133,7 @@ class ApiController extends BaseController
           }
           else
           {
-            var pollKey = "pollGuid:" + vote.PollGuid.toString();
+            var pollKey = "pollGuid:" + vote.PollGuid.toString() + ":poll";
             redisClient.exists(pollKey).then((bool exists){
               if (!exists)
               {

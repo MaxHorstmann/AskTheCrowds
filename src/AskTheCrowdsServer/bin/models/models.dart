@@ -23,7 +23,7 @@ class Poll extends Object with Serializable
   {
     Map pollMap = JSON.decode(json);
     PollGuid = createNew ? Services.NewGuid() : pollMap["PollGuid"];
-    Created = createNew ? new DateTime.now().millisecondsSinceEpoch : new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
+    Created = createNew ? new DateTime.now() : new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
     DurationHours = pollMap["DurationHours"];
     Question = pollMap["Question"];
     Options = pollMap["Options"];
