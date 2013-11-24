@@ -1,6 +1,7 @@
 library models;
 
 import 'Serializable.dart';
+import '../services/services.dart';
 
 class Poll extends Object with Serializable
 {
@@ -20,6 +21,15 @@ class User extends Object with Serializable
   DateTime Created;
   DateTime LastRequest;
   String LastIP;
+  
+  User.CreateNew()
+  {
+    var now = new DateTime.now();
+    UserGuid = Services.NewGuid();
+    Created = now;
+    LastRequest = now;
+  }
+
 }
 
 class Result extends Object with Serializable
