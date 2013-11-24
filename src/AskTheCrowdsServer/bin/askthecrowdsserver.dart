@@ -17,6 +17,7 @@ void main() {
     routeTable["/"] = homeController.Index;
     routeTable["/api/users"] = apiController.Users;
     routeTable["/api/polls"] = apiController.Polls;
+    routeTable["/api/votes"] = apiController.Votes;
     
     server.listen((HttpRequest request) {
       

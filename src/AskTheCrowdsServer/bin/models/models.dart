@@ -45,7 +45,24 @@ class User extends Object with Serializable
     Created = now;
     LastRequest = now;
   }
+  
 
+}
+
+class Vote extends Object with Serializable
+{
+  String UserGuid;
+  String PollGuid;
+  int Option;
+  
+  Vote();
+  Vote.fromJSON(json)
+  {
+    Map voteMap = JSON.decode(json);
+    UserGuid = voteMap["UserGuid"];
+    PollGuid = voteMap["PollGuid"];
+    Option = voteMap["Option"];
+  }
 }
 
 class Result extends Object with Serializable

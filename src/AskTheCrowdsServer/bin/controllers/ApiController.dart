@@ -69,7 +69,11 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("pollGuid"))
       {
-        return false;        
+        // TODO admin only
+        redisClient.keys("pollGuid:*").then((List<String> pollGuids){
+          sendContent(request, pollGuids.join('\n'));
+        });
+        return true;
       }
       var pollGuid = request.uri.queryParameters["pollGuid"];
       var key = "pollGuid:" + pollGuid.toString();
@@ -85,6 +89,42 @@ class ApiController extends BaseController
         }
       });
       return true;
+    }
+    
+    return false;           
+  }
+  
+  bool Votes(HttpRequest request)
+  {
+    if (request.method == "POST")  
+    {
+      HttpBodyHandler.processRequest(request).then((HttpBody body) {        
+        var vote = new Vote.fromJSON(body.body);
+        var userKey = "userGuid:" + vote.UserGuid.toString();
+        redisClient.exists(userKey).then((bool exists){
+          if (!exists)
+          {
+            sendJson(request,new Result("UserGuid not found"),400);
+          }
+          else
+          {
+            var pollKey = "pollGuid:" + vote.PollGuid.toString();
+            redisClient.exists(pollKey).then((bool exists){
+              if (!exists)
+              {
+                sendJson(request,new Result("PollGuid not found"),400);
+              }
+              else
+              {
+                var voteKey = pollKey + ":votes:" + vote.Option.toString();                    
+                redisClient.sadd(voteKey, vote.UserGuid.toString())
+                  .then((_) => sendJson(request,new Result("Voted")));                
+              }
+            });
+          }
+        });      
+      });
+      return true;                          
     }
     
     return false;           
