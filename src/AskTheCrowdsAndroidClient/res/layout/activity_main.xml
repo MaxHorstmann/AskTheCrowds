@@ -5,10 +5,10 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Current polls:" />
+   <TextView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Current polls:" /> 
 
    <TextView 
     android:layout_width="wrap_content"
@@ -16,6 +16,13 @@
     android:text="loading..." 
     android:id="@+id/categories"
     />
-     
+   
+   <Button 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="refresh"
+    android:id="@+id/refreshButton"
+    />
+   
     
 </LinearLayout>

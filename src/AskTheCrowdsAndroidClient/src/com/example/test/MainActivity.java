@@ -16,60 +16,71 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
 	private TextView mCategories;
+	private Button mButton;
+
+	private String url="http://askthecrowds.cloudapp.net/api/polls";
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+	
+		mButton = (Button)findViewById(R.id.refreshButton);
 		mCategories = (TextView)findViewById(R.id.categories);
 		mCategories.setText("loading...");
 		
+		mButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				try
+				{
+					StrictMode.ThreadPolicy policy = new StrictMode.
+					          ThreadPolicy.Builder().permitAll().build();
+					StrictMode.setThreadPolicy(policy); 
+					
+					HttpClient httpclient = new DefaultHttpClient();
+				    HttpResponse response = httpclient.execute(new HttpGet(url));
+				    StatusLine statusLine = response.getStatusLine();
+				    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+				        ByteArrayOutputStream out = new ByteArrayOutputStream();
+				        response.getEntity().writeTo(out);
+				        out.close();
+				        String responseString = out.toString();
 
-		String url="http://askthecrowds.cloudapp.net/api/polls";
+				        StringBuilder sb = new StringBuilder();
+				        
+				        JSONArray jsonAllPolls = new JSONArray(responseString);
+				        for (int i=0; i<jsonAllPolls.length(); i++) {
+				        	JSONObject json = jsonAllPolls.getJSONObject(i);
+				        	String question = json.getString("Question");
+				        	sb.append(question + "\n");
+				        }
+
+				        mCategories.setText(sb.toString());
+				        
+				        //..more logic
+				    } else{
+				        //Closes the connection.
+				        response.getEntity().getContent().close();
+				        throw new IOException(statusLine.getReasonPhrase());
+				    }
+				}
+				catch (Exception e)
+				{
+					mCategories.setText("Error: " + e.toString());
+				}
+			}
+		});
+
 		
-		try
-		{
-			StrictMode.ThreadPolicy policy = new StrictMode.
-			          ThreadPolicy.Builder().permitAll().build();
-			StrictMode.setThreadPolicy(policy); 
-			
-			HttpClient httpclient = new DefaultHttpClient();
-		    HttpResponse response = httpclient.execute(new HttpGet(url));
-		    StatusLine statusLine = response.getStatusLine();
-		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-		        ByteArrayOutputStream out = new ByteArrayOutputStream();
-		        response.getEntity().writeTo(out);
-		        out.close();
-		        String responseString = out.toString();
-
-		        StringBuilder sb = new StringBuilder();
-		        
-		        JSONArray jsonAllPolls = new JSONArray(responseString);
-		        for (int i=0; i<jsonAllPolls.length(); i++) {
-		        	JSONObject json = jsonAllPolls.getJSONObject(i);
-		        	String question = json.getString("Question");
-		        	sb.append(question + "\n");
-		        }
-
-		        mCategories.setText(sb.toString());
-		        
-		        //..more logic
-		    } else{
-		        //Closes the connection.
-		        response.getEntity().getContent().close();
-		        throw new IOException(statusLine.getReasonPhrase());
-		    }
-		}
-		catch (Exception e)
-		{
-			mCategories.setText("Error: " + e.toString());
-		}
 		
 	}
 
