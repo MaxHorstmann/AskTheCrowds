@@ -48,7 +48,7 @@ class ApiController extends BaseController
     if (request.method == "POST")  
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
-        var poll = new Poll.fromJSON(body.body);
+        var poll = new Poll.fromJSON(body.body, true);
         var userKey = "userGuid:" + poll.UserGuid.toString();
         redisClient.exists(userKey).then((bool exists){
           if (!exists)

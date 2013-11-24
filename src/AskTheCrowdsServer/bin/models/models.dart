@@ -16,16 +16,18 @@ class Poll extends Object with Serializable
   List<String> Options;
   List<int> Votes;
   
+  get IsClosed => new DateTime.now().difference(Created).inHours > DurationHours;
+  
   Poll();
-  Poll.fromJSON(json)
+  Poll.fromJSON(json, [ bool createNew = false ])
   {
     Map pollMap = JSON.decode(json);
-    PollGuid = Services.NewGuid();
-    Created = new DateTime.now();
+    PollGuid = createNew ? Services.NewGuid() : pollMap["PollGuid"];
+    Created = createNew ? new DateTime.now().millisecondsSinceEpoch : new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
     DurationHours = pollMap["DurationHours"];
     Question = pollMap["Question"];
     Options = pollMap["Options"];
-    UserGuid = pollMap["UserGuid"];    
+    UserGuid = pollMap["UserGuid"];
   }
   
  }
@@ -68,8 +70,6 @@ class Vote extends Object with Serializable
 
 class Result extends Object with Serializable
 {
-  String Payload;
-  
-  Result(this.Payload);
-  
+  String Payload;  
+  Result(this.Payload);  
 }
