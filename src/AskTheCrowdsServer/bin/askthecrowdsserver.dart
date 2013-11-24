@@ -6,13 +6,13 @@ typedef bool Handler(HttpRequest request);
 
 void main() {
   
-  String _connectionStringRedis = "127.0.0.1:6379/0";
+  String connectionStringRedis = "127.0.0.1:6379/0";
   
   HttpServer.bind(InternetAddress.ANY_IP_V4, 80).then((HttpServer server) {
     
     var routeTable = new Map<String, Handler>();    
-    var homeController = new HomeController(_connectionStringRedis);
-    var apiController = new ApiController(_connectionStringRedis);
+    var homeController = new HomeController();
+    var apiController = new ApiController(connectionStringRedis);
     
     routeTable["/"] = homeController.Index;
     routeTable["/api/users"] = apiController.Users;
