@@ -22,74 +22,56 @@ class ApiController extends BaseController
   
   bool Users(HttpRequest request)
   {
-      if (request.method != "POST")  { return false;  }
+      if (request.method == "GET") // TODO admin-only
+      {
+        redisClient.keys("userGuid:*").then((List<String> userGuids){
+          sendContent(request, userGuids.join('\n'));
+        });
+        return true;
+      }
+
+      if (request.method == "POST")
+      {
+        var newUser = new User.CreateNew();
+        var json = JSON.encode(newUser);
+        var key = "userGuid:" + newUser.UserGuid;
+        redisClient.set(key, json).then((_)
+            {
+              sendJsonRaw(request, json);
+            });
+        return true;      
+      }
       
-      var newUser = services.CreateNewUser();
-      var json = JSON.encode(newUser);
-      var key = "userGuid:" + newUser.UserGuid;
-      redisClient.set(key, json).then((_)
-          {
-            sendJsonRaw(request, json);
-          });
-      return true;      
+      return false;      
   }
 
   bool Polls(HttpRequest request)
   {
     if (request.method == "POST")  
     {
-      
-      //HttpBodyHandler.processRequest(request).then((HttpBody body) {
-      //  // http://blog.sethladd.com/2013/09/forms-http-servers-and-polymer-with-dart.html
-
-      request.fold(new BytesBuilder(), (builder, data) => builder..add(data))
-        .then((builder) {
-          
-          var data = builder.takeBytes();
-          var json = UTF8.decode(data);
-          Map pollMap = JSON.decode(json);
-          
-          var poll = new Poll()
-          ..PollGuid = services.NewGuid()
-          ..Created = new DateTime.now()
-          ..DurationHours = pollMap["DurationHours"]
-          ..Question = pollMap["Question"]
-          ..Options = pollMap["Options"]
-          ..UserGuid = pollMap["UserGuid"];
-          
-          RedisClient.connect(connectionStringRedis)
-            .then((RedisClient client) {
-              
-              var userKey = "userGuid:" + poll.UserGuid.toString();
-              client.exists(userKey)
-                .then((bool exists){
-                  if (!exists)
-                  {
-                    var result = new Result()
-                    ..ResultPayload = "User not found";
-                    sendJson(request,result,400);
-                    return true;
-                  }
-                  var key = "pollGuid:" + poll.PollGuid;
-                  var json = JSON.encode(poll);
-                  client.set(key, json).then((_){
-                    var result = new Result()
-                    ..ResultPayload = poll.PollGuid;
-                    sendJson(request,result);
-                  });
-                  return true;                          
-                });
-              
-            })
-              .catchError((error) {
-                var result = new Result()
-                ..ResultPayload = "could not connect to Redis";
-                sendJson(request, result, 500);
-                return true;                      
-              });
-          
+      HttpBodyHandler.processRequest(request).then((HttpBody body) {        
+        var poll = new Poll.fromJSON(body.body);
+        var userKey = "userGuid:" + poll.UserGuid.toString();
+        redisClient.exists(userKey).then((bool exists){
+          if (!exists)
+          {
+            var result = new Result()
+            ..ResultPayload = "User not found";
+            sendJson(request,result,400);
+          }
+          else
+          {
+            var key = "pollGuid:" + poll.PollGuid;
+            var json = JSON.encode(poll);
+            redisClient.set(key, json).then((_){
+              var result = new Result()
+              ..ResultPayload = poll.PollGuid;
+              sendJson(request,result);
+            });
+          }
         });        
-      return true;
+      });
+      return true;                          
     }
     
     if (request.method == "GET")  

@@ -1,5 +1,6 @@
 library models;
 
+import 'dart:convert';
 import 'Serializable.dart';
 import '../services/services.dart';
 
@@ -13,6 +14,19 @@ class Poll extends Object with Serializable
   String Language;
   String Question;
   List<String> Options;
+  
+  Poll();
+  Poll.fromJSON(json)
+  {
+    Map pollMap = JSON.decode(json);
+    PollGuid = Services.NewGuid();
+    Created = new DateTime.now();
+    DurationHours = pollMap["DurationHours"];
+    Question = pollMap["Question"];
+    Options = pollMap["Options"];
+    UserGuid = pollMap["UserGuid"];    
+  }
+  
  }
 
 class User extends Object with Serializable
@@ -21,6 +35,8 @@ class User extends Object with Serializable
   DateTime Created;
   DateTime LastRequest;
   String LastIP;
+  
+  User();
   
   User.CreateNew()
   {
