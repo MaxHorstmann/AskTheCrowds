@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
 		mCategories.setText("loading...");
 		
 
-		String url="http://askthecrowds.cloudapp.net/categories";
+		String url="http://askthecrowds.cloudapp.net/api/polls";
 		
 		try
 		{
@@ -47,16 +47,16 @@ public class MainActivity extends Activity {
 		        response.getEntity().writeTo(out);
 		        out.close();
 		        String responseString = out.toString();
-		        
-		        JSONObject json = new JSONObject(responseString);
+
 		        StringBuilder sb = new StringBuilder();
 		        
-		        JSONArray categories = json.getJSONArray("categories");
-		        for (int i=0; i<categories.length(); i++) {
-		        	sb.append((String)(categories.get(i)));
-		        	sb.append("\n");
+		        JSONArray jsonAllPolls = new JSONArray(responseString);
+		        for (int i=0; i<jsonAllPolls.length(); i++) {
+		        	JSONObject json = jsonAllPolls.getJSONObject(i);
+		        	String question = json.getString("Question");
+		        	sb.append(question + "\n");
 		        }
-		        
+
 		        mCategories.setText(sb.toString());
 		        
 		        //..more logic
