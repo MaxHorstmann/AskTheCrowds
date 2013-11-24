@@ -67,14 +67,23 @@ class ApiController extends BaseController
     
     if (request.method == "GET")  
     { 
-      var newPoll = new Poll()
-      ..CategoryId = 5
-      ..Language = "en"
-      ..Created = new DateTime.now()
-      ..DurationHours = 5
-      ..Question = "Where should I go on my next vacation?"
-      ..Options = [ "Hawaii", "New York" ];
-      sendJson(request, [newPoll, newPoll]);                        
+      if (!request.uri.queryParameters.containsKey("pollGuid"))
+      {
+        return false;        
+      }
+      var pollGuid = request.uri.queryParameters["pollGuid"];
+      var key = "pollGuid:" + pollGuid.toString();
+      redisClient.exists(key).then((bool exists) {
+        if (!exists) { 
+          this.sendPageNotFound(request); 
+        }        
+        else {
+          redisClient.get(key).then((String value) {
+            var poll = new Poll.fromJSON(value);
+            sendJson(request, poll);                        
+          });
+        }
+      });
       return true;
     }
     

@@ -34,8 +34,8 @@ void main() {
       });
       
       if (!routeFound) {
-        request.response.write("404 not found");
         request.response.statusCode = 404;
+        request.response.write("404 not found");
         request.response.close();
       }
     });
