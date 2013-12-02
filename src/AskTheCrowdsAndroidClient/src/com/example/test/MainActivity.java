@@ -2,15 +2,17 @@ package com.example.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -20,24 +22,36 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.test.Models.Poll;
+import com.example.test.Models.Vote;
+import com.google.gson.Gson;
+
 public class MainActivity extends Activity {
 
 	private TextView mCategories;
-	private Button mButton;
+	private Button mButtonRefresh;
+	private Button mButtonVote;
 
 	private String url="http://askthecrowds.cloudapp.net/api/polls";
-
+	private String urlVotes="http://askthecrowds.cloudapp.net/api/votes";
+	
+	private Gson gson = new Gson();
+	
+	private Poll[] polls;
+	
+	private Random random = new Random();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	
-		mButton = (Button)findViewById(R.id.refreshButton);
+		mButtonRefresh = (Button)findViewById(R.id.refreshButton);
 		mCategories = (TextView)findViewById(R.id.categories);
 		mCategories.setText("loading...");
 		
-		mButton.setOnClickListener(new View.OnClickListener() {
+		mButtonRefresh.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				try
@@ -49,6 +63,7 @@ public class MainActivity extends Activity {
 					HttpClient httpclient = new DefaultHttpClient();
 				    HttpResponse response = httpclient.execute(new HttpGet(url));
 				    StatusLine statusLine = response.getStatusLine();
+				    
 				    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
 				        ByteArrayOutputStream out = new ByteArrayOutputStream();
 				        response.getEntity().writeTo(out);
@@ -57,11 +72,10 @@ public class MainActivity extends Activity {
 
 				        StringBuilder sb = new StringBuilder();
 				        
-				        JSONArray jsonAllPolls = new JSONArray(responseString);
-				        for (int i=0; i<jsonAllPolls.length(); i++) {
-				        	JSONObject json = jsonAllPolls.getJSONObject(i);
-				        	String question = json.getString("Question");
-				        	sb.append(question + "\n");
+				        polls = gson.fromJson(responseString, Poll[].class);				        
+				        for (Poll poll : polls) 
+				        {
+				        	sb.append(poll.Question + "\n");
 				        }
 
 				        mCategories.setText(sb.toString());
@@ -79,6 +93,51 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
+		
+		
+		mButtonVote = (Button)findViewById(R.id.voteButton);
+		
+		mButtonVote.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				// cast a vote
+				Poll poll = polls[1];
+				Vote vote = new Vote();
+				vote.PollGuid = poll.PollGuid;
+				vote.UserGuid = poll.UserGuid;
+				vote.Option = random.nextInt(poll.Options.size());
+				String json = gson.toJson(vote);
+				
+				HttpClient httpclient = new DefaultHttpClient();
+			    try {
+					HttpPost post = new HttpPost(urlVotes);
+					post.setEntity(new StringEntity(json));
+					HttpResponse response = httpclient.execute(post);
+				    StatusLine statusLine = response.getStatusLine();
+				    
+				    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+						mCategories.setText("Voted " + Integer.toString(vote.Option));
+				    }
+				    else {
+						mCategories.setText("Tried to vite, didn't work.");
+				    }
+					
+					
+					
+				} catch (ClientProtocolException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				
+			}
+		});
+
 
 		
 		
