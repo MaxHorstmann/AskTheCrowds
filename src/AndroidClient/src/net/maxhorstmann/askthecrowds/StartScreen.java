@@ -1,10 +1,14 @@
 package net.maxhorstmann.askthecrowds;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 
+import com.google.gson.Gson;
+
 public class StartScreen extends Activity {
+	
+	Gson gson = new Gson();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
