@@ -1,25 +1,35 @@
 package net.maxhorstmann.askthecrowds;
 
-import net.maxhorstmann.askthecrowds.models.services.BackendService;
+import net.maxhorstmann.askthecrowds.tasks.TestTask;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.gson.Gson;
 
 public class StartScreen extends Activity {
 	
 	Gson gson = new Gson();
+	Button button;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_start_screen);
 		
-		BackendService s = new BackendService();
+		button = (Button)findViewById(R.id.button1);
+		button.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				TestTask tt = new TestTask();
+				tt.execute();
+			}
+		});
 		
-		@SuppressWarnings("unused")
-		String userguid = s.createUser();
 		
 	}
 

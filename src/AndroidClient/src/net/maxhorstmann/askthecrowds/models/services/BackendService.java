@@ -1,11 +1,8 @@
 package net.maxhorstmann.askthecrowds.models.services;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -27,9 +24,8 @@ public class BackendService {
 		    	return "created";
 		    }
 		} 
-		catch (ClientProtocolException e) {
-		} 
-		catch (IOException e) {
+		catch (Exception ex)
+		{
 		}
 		
 		return null;
