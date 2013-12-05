@@ -1,6 +1,6 @@
 package net.maxhorstmann.askthecrowds.tasks;
 
-import net.maxhorstmann.askthecrowds.models.services.BackendService;
+import net.maxhorstmann.askthecrowds.services.BackendService;
 import android.os.AsyncTask;
 
 
