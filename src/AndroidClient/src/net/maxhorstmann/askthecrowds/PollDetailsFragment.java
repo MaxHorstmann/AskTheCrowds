@@ -1,6 +1,7 @@
 package net.maxhorstmann.askthecrowds;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import net.maxhorstmann.askthecrowds.models.Poll;
 import android.os.Bundle;
@@ -36,10 +37,13 @@ public class PollDetailsFragment extends Fragment {
 	
 	@Override 
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+		
 		View v = inflater.inflate(R.layout.poll_details, parent, false);
 		
 		mTextViewPollTitle = (TextView)v.findViewById(R.id.textViewPollTitle);
 		mTextViewPollTitle.setText(mPoll.Question);
+		
+		
 		
 		mLinearLayoutOptions = (LinearLayout)v.findViewById(R.id.linearLayoutOptions);
 		mLinearLayoutOptions.removeAllViewsInLayout();
@@ -47,7 +51,7 @@ public class PollDetailsFragment extends Fragment {
 		{
 			int votes = mPoll.Votes.get(i);
 			String option = mPoll.Options.get(i);
-			String optionText = String.format("%s     ( %d votes)", option, votes);
+			String optionText = String.format(Locale.ENGLISH, "%s     ( %d votes)", option, votes);
 			TextView child = new TextView(getActivity());
 			child.setText(optionText);			
 			mLinearLayoutOptions.addView(child);			

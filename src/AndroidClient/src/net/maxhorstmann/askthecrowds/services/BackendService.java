@@ -1,5 +1,7 @@
 package net.maxhorstmann.askthecrowds.services;
 
+import net.maxhorstmann.askthecrowds.models.Poll;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -29,6 +31,28 @@ public class BackendService {
 		}
 		
 		return "1234-5678-1234-5678";
+		
+	}
+	
+	public String postPoll(Poll poll) {
+		
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost post = new HttpPost(baseUrl + "/polls");
+		HttpResponse response;
+		
+		try {
+			response = httpclient.execute(post);
+		    StatusLine statusLine = response.getStatusLine();
+		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+		    	return "created";
+		    }
+		} 
+		catch (Exception ex)
+		{
+		}
+		
+		return "1234-5678-1234-5678";
+		
 		
 	}
 }

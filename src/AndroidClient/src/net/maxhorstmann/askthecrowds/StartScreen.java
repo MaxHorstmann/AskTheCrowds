@@ -1,5 +1,6 @@
 package net.maxhorstmann.askthecrowds;
 
+import net.maxhorstmann.askthecrowds.fragments.CreatePollFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -25,7 +26,7 @@ public class StartScreen extends FragmentActivity {
 		Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
 		
 		if (fragment == null) {
-			fragment = new PollDetailsFragment();
+			fragment = new CreatePollFragment();
 			fm.beginTransaction()
 			  .add(R.id.fragmentContainer, fragment)
 			  .commit();
