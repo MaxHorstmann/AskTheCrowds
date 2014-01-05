@@ -23,9 +23,12 @@ echo "Pulling latest AskTheCrowds from github ..."
 wget https://github.com/MaxHorstmann/AskTheCrowds/archive/$ARCHIVE2
 unzip $ARCHIVE2
 
-cd AskTheCrowds-master/src/AskTheCrowdsServer
+cp -f AskTheCrowds-master/src/AskTheCrowdsServer /opt/atc-server
+
+cd /opt/atc-server
 /opt/dart/dart/dart-sdk/bin/pub get
 
+mkdir -p /var/log/atc
 cp -f /vagrant/atc-server.conf /etc/init
 
 echo "Starting AskTheCrowds server..."
