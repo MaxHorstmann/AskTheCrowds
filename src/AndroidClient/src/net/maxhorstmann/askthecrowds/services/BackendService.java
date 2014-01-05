@@ -50,7 +50,6 @@ public class BackendService {
 		try {
 			post.setEntity(new StringEntity(json));
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		HttpResponse response;

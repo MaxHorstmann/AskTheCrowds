@@ -57,6 +57,9 @@ public class CreatePollFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				Poll poll = new Poll();
+				
+				poll.DurationHours = 1; 
+				
 				poll.Question = mEditTextQuestion.getText().toString();
 				poll.Options = new ArrayList<String>();
 				poll.Options.add(mEditTextAnswer1.getText().toString());
