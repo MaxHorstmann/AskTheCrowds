@@ -7,7 +7,7 @@ function get-dart-dependencies {
 
 function test-dart-sources {
  echo "test-dart-sources"
- dart test/askthecrowdsserver-tests || { echo 'askthecrowdsserver-tests failed' ; exit 1; }
+ dart test/askthecrowdsserver-tests.dart || { echo 'askthecrowdsserver-tests failed' ; exit 1; }
 }
 
 
