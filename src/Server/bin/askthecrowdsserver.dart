@@ -15,6 +15,7 @@ void main() {
     var apiController = new ApiController(connectionStringRedis);
     
     routeTable["/"] = homeController.Index;
+    routeTable["/pingdom"] = homeController.Pingdom;
     routeTable["/api/users"] = apiController.Users;
     routeTable["/api/polls"] = apiController.Polls;
     routeTable["/api/votes"] = apiController.Votes;

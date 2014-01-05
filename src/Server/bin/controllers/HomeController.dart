@@ -14,5 +14,10 @@ class HomeController extends BaseController
     return true;
   }
 
-  
+  // Route = '/pingdom'
+  bool Pingdom(HttpRequest request)
+  {
+    sendContent(request, "hello pingdom - all good.");
+    return true;
+  }
 }
