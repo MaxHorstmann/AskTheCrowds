@@ -10,8 +10,6 @@ void main() {
   
   HttpServer.bind(InternetAddress.ANY_IP_V4, 80).then((HttpServer server) {
     
-    foobar breaking the build on purpose!!
-    
     var routeTable = new Map<String, Handler>();    
     var homeController = new HomeController();
     var apiController = new ApiController(connectionStringRedis);
