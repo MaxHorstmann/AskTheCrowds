@@ -77,7 +77,9 @@ class ApiController extends BaseController
           pollGuids.forEach((String pollGuid) {
             var pollFuture = GetPoll(pollGuid);
             pollFuture.then((Poll p) { 
-              polls.add(p);
+              if (!p.IsClosed) {
+                polls.add(p);
+              }
               });
             futures.add(pollFuture);
           });

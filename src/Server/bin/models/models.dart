@@ -16,7 +16,7 @@ class Poll extends Object with Serializable
   List<String> Options;
   List<int> Votes;
   
-  get IsClosed => new DateTime.now().difference(Created).inHours > DurationHours;
+  bool get IsClosed => new DateTime.now().difference(Created).inHours > DurationHours;
   
   Poll();
   Poll.fromJSON(json, [ bool createNew = false ])
