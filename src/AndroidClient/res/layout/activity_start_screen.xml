@@ -13,21 +13,21 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/buttonVote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Vote" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonViewResults"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="View Results" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/buttonCreatePoll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

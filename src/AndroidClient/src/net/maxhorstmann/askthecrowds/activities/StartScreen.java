@@ -2,14 +2,14 @@ package net.maxhorstmann.askthecrowds.activities;
 
 import net.maxhorstmann.askthecrowds.R;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 public class StartScreen extends Activity {
 	
-	Button button;
-	TextView textView;
+	Button mButtonCreatePoll;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,28 +17,14 @@ public class StartScreen extends Activity {
 		
 		setContentView(R.layout.activity_start_screen);
 		
-		//textView = (TextView)findViewById(R.id.textView1);
-
-		//resultDownloader = new ResultDownloader<String>();		
-		//resultDownloader.start();
-		//resultDownloader.getLooper();
-		
-		//button = (Button)findViewById(R.id.button1);
-//		button.setOnClickListener(new View.OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				
-//				textView.setText("creating user...");
-//				
-//				//resultDownloader.queueResultDownload(token, pollGuid)
-//				
-//				//CreateUserTask createUserTask = new CreateUserTask();
-//				//createUserTask.execute(textView);
-//				
-//			}
-//		});
-		
+		mButtonCreatePoll = (Button)findViewById(R.id.buttonCreatePoll);
+		mButtonCreatePoll.setOnClickListener(new View.OnClickListener() {			
+			@Override
+			public void onClick(View v) {				
+				Intent intent = new Intent(StartScreen.this, CreatePoll.class);
+				startActivity(intent);				
+			}
+		});
 			
 		
 	}
