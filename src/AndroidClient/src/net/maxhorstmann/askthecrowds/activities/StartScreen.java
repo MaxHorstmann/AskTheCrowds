@@ -1,35 +1,21 @@
-package net.maxhorstmann.askthecrowds;
+package net.maxhorstmann.askthecrowds.activities;
 
-import net.maxhorstmann.askthecrowds.fragments.CreatePollFragment;
+import net.maxhorstmann.askthecrowds.R;
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class StartScreen extends FragmentActivity {
+public class StartScreen extends Activity {
 	
 	Button button;
 	TextView textView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
+		super.onCreate(savedInstanceState);		
 		
 		setContentView(R.layout.activity_start_screen);
-		
-		FragmentManager fm = getSupportFragmentManager();
-		Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
-		
-		if (fragment == null) {
-			fragment = new CreatePollFragment();
-			fm.beginTransaction()
-			  .add(R.id.fragmentContainer, fragment)
-			  .commit();
-			
-		}
 		
 		//textView = (TextView)findViewById(R.id.textView1);
 
