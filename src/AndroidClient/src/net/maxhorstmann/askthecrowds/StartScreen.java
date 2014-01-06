@@ -13,8 +13,6 @@ public class StartScreen extends FragmentActivity {
 	Button button;
 	TextView textView;
 	
-	ResultDownloader<String> resultDownloader;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
