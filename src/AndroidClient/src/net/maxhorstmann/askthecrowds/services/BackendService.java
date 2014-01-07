@@ -47,30 +47,32 @@ public class BackendService {
 	
 	public String postPoll(Poll poll) {
 		
-		String json = gson.toJson(poll);
-		
-		HttpClient httpclient = getHttpClient();
-		HttpPost post = new HttpPost(baseUrl + "/polls");
-		try {
-			post.setEntity(new StringEntity(json));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		try {
-			HttpResponse response = httpclient.execute(post);
+		try 
+		{
+			HttpPost post = getHttpPost("polls", gson.toJson(poll));
+			HttpResponse response = getHttpClient().execute(post);
 		    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 				String jsonResult = EntityUtils.toString(response.getEntity());
-				ApiResult result = gson.fromJson(jsonResult, ApiResult.class);
-				return result.Payload;				
+				return gson.fromJson(jsonResult, ApiResult.class).Payload;
 		    }
 		} 
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
+		}		
+		return null;		
+	}
+	
+	private HttpPost getHttpPost(String route, String entity)
+	{
+		HttpPost post = new HttpPost(baseUrl + "/" + route);
+		try {
+			post.setEntity(new StringEntity(entity));
+			return post;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
 		}
-		
-		return null;	
-		
 	}
 	
 	private HttpClient getHttpClient()
