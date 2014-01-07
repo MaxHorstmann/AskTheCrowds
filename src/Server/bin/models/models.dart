@@ -68,8 +68,8 @@ class Vote extends Object with Serializable
   }
 }
 
-class Result extends Object with Serializable
+class ApiResult extends Object with Serializable
 {
   String Payload;  
-  Result(this.Payload);  
+  ApiResult(this.Payload);  
 }

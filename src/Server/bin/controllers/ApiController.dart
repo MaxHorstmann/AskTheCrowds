@@ -53,13 +53,13 @@ class ApiController extends BaseController
         redisClient.exists(userKey).then((bool exists){
           if (!exists)
           {
-            sendJson(request,new Result("UserGuid not found"),400);
+            sendJson(request,new ApiResult("UserGuid not found"),400);
           }
           else
           {
             var key = "pollGuid:" + poll.PollGuid + ":poll";
             var json = JSON.encode(poll);
-            redisClient.set(key, json).then((_) => sendJson(request,new Result(poll.PollGuid)));
+            redisClient.set(key, json).then((_) => sendJson(request,new ApiResult(poll.PollGuid)));
           }
         });        
       });
@@ -131,7 +131,7 @@ class ApiController extends BaseController
         redisClient.exists(userKey).then((bool exists){
           if (!exists)
           {
-            sendJson(request,new Result("UserGuid not found"),400);
+            sendJson(request,new ApiResult("UserGuid not found"),400);
           }
           else
           {
@@ -139,13 +139,13 @@ class ApiController extends BaseController
             redisClient.exists(pollKey).then((bool exists){
               if (!exists)
               {
-                sendJson(request,new Result("PollGuid not found"),400);
+                sendJson(request,new ApiResult("PollGuid not found"),400);
               }
               else
               {
                 var voteKey = pollKey + ":votes:" + vote.Option.toString();                    
                 redisClient.sadd(voteKey, vote.UserGuid.toString())
-                  .then((_) => sendJson(request,new Result("Voted")));                
+                  .then((_) => sendJson(request,new ApiResult("Voted")));                
               }
             });
           }
