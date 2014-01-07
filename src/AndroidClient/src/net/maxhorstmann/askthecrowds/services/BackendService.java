@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 public class BackendService {
 	
 	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
+	private final int httpConnectionTimeout = 5000;
 
 	public String createUser()	{
 		
@@ -49,8 +50,8 @@ public class BackendService {
 		
 		HttpClient httpclient = new DefaultHttpClient();
 		int timeout = 5;
-		HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), timeout * 1000);
-		HttpConnectionParams.setSoTimeout(httpclient.getParams(), timeout * 1000);
+		HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), httpConnectionTimeout);
+		HttpConnectionParams.setSoTimeout(httpclient.getParams(), httpConnectionTimeout);
 		
 		HttpPost post = new HttpPost(baseUrl + "/polls");
 		try {
