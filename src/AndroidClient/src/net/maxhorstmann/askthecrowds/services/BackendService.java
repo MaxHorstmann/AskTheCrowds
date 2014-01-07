@@ -21,6 +21,8 @@ public class BackendService {
 	
 	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
 	private final int httpConnectionTimeout = 5000;
+	
+	private final Gson gson = new Gson();
 
 	public String createUser()	{
 		
@@ -45,30 +47,21 @@ public class BackendService {
 	
 	public String postPoll(Poll poll) {
 		
-		Gson gson = new Gson();
 		String json = gson.toJson(poll);
 		
-		HttpClient httpclient = new DefaultHttpClient();
-		int timeout = 5;
-		HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), httpConnectionTimeout);
-		HttpConnectionParams.setSoTimeout(httpclient.getParams(), httpConnectionTimeout);
-		
+		HttpClient httpclient = getHttpClient();
 		HttpPost post = new HttpPost(baseUrl + "/polls");
 		try {
 			post.setEntity(new StringEntity(json));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		HttpResponse response;
-		
 		try {
-			response = httpclient.execute(post);
-		    StatusLine statusLine = response.getStatusLine();
-		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
+			HttpResponse response = httpclient.execute(post);
+		    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
 				String jsonResult = EntityUtils.toString(response.getEntity());
 				ApiResult result = gson.fromJson(jsonResult, ApiResult.class);
-				return result.Payload;
-				
+				return result.Payload;				
 		    }
 		} 
 		catch (Exception ex)
@@ -76,8 +69,17 @@ public class BackendService {
 			ex.printStackTrace();
 		}
 		
-		return null;
-		
+		return null;	
 		
 	}
+	
+	private HttpClient getHttpClient()
+	{
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpConnectionParams.setConnectionTimeout(httpclient.getParams(), httpConnectionTimeout);
+		HttpConnectionParams.setSoTimeout(httpclient.getParams(), httpConnectionTimeout);
+		return httpclient;
+	}
+	
+	
 }
