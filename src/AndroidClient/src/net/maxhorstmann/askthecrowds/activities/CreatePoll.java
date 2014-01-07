@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 public class CreatePoll extends Activity {
 
@@ -26,6 +27,7 @@ public class CreatePoll extends Activity {
 		
 		@Override 
 		protected void onPostExecute(String result) {
+			CreatePoll.this.mProgressBar.setVisibility(View.INVISIBLE);
 			if ((result==null) || (result.length()==0))
 			{
 				CreatePoll.this.mAlertDialogFailure.show();
@@ -45,6 +47,8 @@ public class CreatePoll extends Activity {
 
 	AlertDialog mAlertDialogSuccess;
 	AlertDialog mAlertDialogFailure;
+	
+	ProgressBar mProgressBar;
 
 	PostPollTask mPostPollTask;
 	
@@ -59,6 +63,9 @@ public class CreatePoll extends Activity {
 		mEditTextAnswer1 = (EditText)findViewById(R.id.editTextAnswer1);
 		mEditTextAnswer2 = (EditText)findViewById(R.id.editTextAnswer2);		
 		
+		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+		mProgressBar.setVisibility(View.INVISIBLE);
+		
 		mButtonPublish = (Button)findViewById(R.id.buttonPublish);
 		mButtonPublish.setOnClickListener(new View.OnClickListener() {
 			
@@ -66,6 +73,7 @@ public class CreatePoll extends Activity {
 			public void onClick(View v) {
 				
 				mButtonPublish.setEnabled(false);
+				mProgressBar.setVisibility(View.VISIBLE);
 				
 				Poll poll = new Poll();
 				
