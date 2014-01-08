@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
+import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -23,20 +24,13 @@ public class CreatePoll extends Activity {
 		@Override
 		protected String doInBackground(Poll... polls) {
 			BackendService backend = new BackendService();
+			LocalStorageService localStorage = new LocalStorageService(CreatePoll.this);			
+			
      		Poll poll = polls[0];
-     		
-     		String userGuid = mPreferences.getString("USER_GUID", null);
-
-     		
+     		String userGuid = localStorage.getUserGuid();
      		if (userGuid == null) {
      			userGuid = backend.createUser();
-     			if (userGuid == null) {
-     				return null;
-     			}
-     			SharedPreferences.Editor editor = mPreferences.edit();
-     			editor.putString("USER_GUID", userGuid);
-     			if (!editor.commit())
-     			{
+     			if ((userGuid == null) || ((!localStorage.putUserGuid(userGuid)))) {
      				return null;
      			}
      		}
@@ -69,18 +63,12 @@ public class CreatePoll extends Activity {
 	AlertDialog mAlertDialogFailure;
 	
 	ProgressBar mProgressBar;
-
 	PostPollTask mPostPollTask;
-	
-	SharedPreferences mPreferences;
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mPreferences = getSharedPreferences("ASK_THE_CROWDS", MODE_PRIVATE);
-
 		createAlertDialogs();
 		setContentView(R.layout.create_poll_fragment);
 		

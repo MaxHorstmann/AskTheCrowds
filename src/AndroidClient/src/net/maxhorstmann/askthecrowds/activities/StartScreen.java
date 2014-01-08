@@ -13,8 +13,6 @@ public class StartScreen extends Activity {
 	
 	Button mButtonCreatePoll;
 	TextView mTextViewUserGuid;
-	SharedPreferences mPreferences;
-	String mUserGuid;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +30,6 @@ public class StartScreen extends Activity {
 		});
 		
 		mTextViewUserGuid = (TextView)findViewById(R.id.textViewUserId);
-		mPreferences = getSharedPreferences("ASK_THE_CROWDS", MODE_PRIVATE);
-		mUserGuid = mPreferences.getString("USER_GUID", "");
-		
-		mTextViewUserGuid.setText(mUserGuid);
 	}
 
 }
