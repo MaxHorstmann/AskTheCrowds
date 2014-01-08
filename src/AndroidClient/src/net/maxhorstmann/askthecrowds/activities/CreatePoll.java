@@ -9,7 +9,6 @@ import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -23,20 +22,17 @@ public class CreatePoll extends Activity {
 	{
 		@Override
 		protected String doInBackground(Poll... polls) {
-			BackendService backend = new BackendService();
-			LocalStorageService localStorage = new LocalStorageService(CreatePoll.this);			
-			
      		Poll poll = polls[0];
-     		String userGuid = localStorage.getUserGuid();
+     		String userGuid = mLocalStorageService.getUserGuid();
      		if (userGuid == null) {
-     			userGuid = backend.createUser();
-     			if ((userGuid == null) || ((!localStorage.putUserGuid(userGuid)))) {
+     			userGuid = mBackendService.createUser();
+     			if ((userGuid == null) || ((!mLocalStorageService.putUserGuid(userGuid)))) {
      				return null;
      			}
      		}
      		
      		poll.UserGuid = userGuid;
-			return backend.postPoll(poll);
+			return mBackendService.postPoll(poll);
 		}	
 		
 		@Override 
@@ -65,9 +61,16 @@ public class CreatePoll extends Activity {
 	ProgressBar mProgressBar;
 	PostPollTask mPostPollTask;
 	
+	BackendService mBackendService;
+	LocalStorageService mLocalStorageService;			
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		mBackendService = new BackendService();
+		mLocalStorageService = new LocalStorageService(this);
 		
 		createAlertDialogs();
 		setContentView(R.layout.create_poll_fragment);

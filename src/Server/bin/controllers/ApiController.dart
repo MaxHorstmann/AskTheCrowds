@@ -53,7 +53,7 @@ class ApiController extends BaseController
         redisClient.exists(userKey).then((bool exists){
           if (!exists)
           {
-            sendJson(request,new ApiResult("UserGuid not found"),400);
+            sendJson(request,new ApiResult("USERGUID_NOT_FOUND"),400);
           }
           else
           {

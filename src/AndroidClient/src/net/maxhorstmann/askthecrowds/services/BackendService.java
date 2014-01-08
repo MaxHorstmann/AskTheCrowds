@@ -45,9 +45,10 @@ public class BackendService {
 		{
 			HttpPost post = getHttpPost("polls", gson.toJson(poll));
 			HttpResponse response = getHttpClient().execute(post);
-		    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				String jsonResult = EntityUtils.toString(response.getEntity());
-				return gson.fromJson(jsonResult, ApiResult.class).Payload;
+			int responseStatusCode = response.getStatusLine().getStatusCode();
+		    if (responseStatusCode == HttpStatus.SC_OK){
+				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
+				return apiResult.Payload;
 		    }
 		} 
 		catch (Exception ex)
