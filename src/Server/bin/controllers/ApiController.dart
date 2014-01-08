@@ -36,7 +36,7 @@ class ApiController extends BaseController
         var newUser = new User.CreateNew();
         var json = JSON.encode(newUser);
         var key = "userGuid:" + newUser.UserGuid;
-        redisClient.set(key, json).then((_) => sendJsonRaw(request, json));
+        redisClient.set(key, json).then((_) => sendJson(request, new ApiResult(newUser.UserGuid)));
         return true;      
       }
       
