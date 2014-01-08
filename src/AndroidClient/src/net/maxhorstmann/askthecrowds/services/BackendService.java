@@ -7,7 +7,6 @@ import net.maxhorstmann.askthecrowds.models.Poll;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -25,24 +24,19 @@ public class BackendService {
 	private final Gson gson = new Gson();
 
 	public String createUser()	{
-		
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost post = new HttpPost(baseUrl + "/users");
-		HttpResponse response;
-		
 		try {
-			response = httpclient.execute(post);
-		    StatusLine statusLine = response.getStatusLine();
-		    if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-		    	return "created";
+			HttpPost post = getHttpPost("users", "");
+			HttpResponse response = getHttpClient().execute(post);
+		    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+				String jsonResult = EntityUtils.toString(response.getEntity());
+				return gson.fromJson(jsonResult, ApiResult.class).Payload;
 		    }
-		} 
+		}
 		catch (Exception ex)
 		{
-		}
-		
-		return "1234-5678-1234-5678";
-		
+			ex.printStackTrace();
+		}		
+		return null;			
 	}
 	
 	public String postPoll(Poll poll) {

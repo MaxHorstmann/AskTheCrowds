@@ -3,13 +3,18 @@ package net.maxhorstmann.askthecrowds.activities;
 import net.maxhorstmann.askthecrowds.R;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class StartScreen extends Activity {
 	
 	Button mButtonCreatePoll;
+	TextView mTextViewUserGuid;
+	SharedPreferences mPreferences;
+	String mUserGuid;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +30,12 @@ public class StartScreen extends Activity {
 				startActivity(intent);				
 			}
 		});
-			
 		
+		mTextViewUserGuid = (TextView)findViewById(R.id.textViewUserId);
+		mPreferences = getPreferences(MODE_PRIVATE);
+		mUserGuid = mPreferences.getString("USER_GUID", "");
+		
+		mTextViewUserGuid.setText(mUserGuid);
 	}
 
 //	@Override

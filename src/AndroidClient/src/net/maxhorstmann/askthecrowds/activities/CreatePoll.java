@@ -8,6 +8,7 @@ import net.maxhorstmann.askthecrowds.services.BackendService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -20,21 +21,40 @@ public class CreatePoll extends Activity {
 	private class PostPollTask extends AsyncTask<Poll, Void, String>
 	{
 		@Override
-		protected String doInBackground(Poll... params) {
+		protected String doInBackground(Poll... polls) {
 			BackendService backend = new BackendService();
-			return backend.postPoll(params[0]);
-		}				
+     		Poll poll = polls[0];
+     		
+     		String userGuid = null; //CreatePoll.this.mPreferences.getString("USER_GUID", null);
+
+     		
+     		if (userGuid == null) {
+     			userGuid = backend.createUser();
+     			if (userGuid == null) {
+     				return null;
+     			}
+     			SharedPreferences.Editor editor = mPreferences.edit();
+     			editor.putString("USER_GUID", userGuid);
+     			if (!editor.commit())
+     			{
+     				return null;
+     			}
+     		}
+     		
+     		poll.UserGuid = userGuid;
+			return backend.postPoll(poll);
+		}	
 		
 		@Override 
 		protected void onPostExecute(String result) {
 			CreatePoll.this.mProgressBar.setVisibility(View.INVISIBLE);
 			if ((result==null) || (result.length()==0))
 			{
-				CreatePoll.this.mAlertDialogFailure.show();
+				mAlertDialogFailure.show();
 			}
 			else
 			{
-				CreatePoll.this.mAlertDialogSuccess.show();
+				mAlertDialogSuccess.show();
 			}
 		}
 	}
@@ -52,9 +72,14 @@ public class CreatePoll extends Activity {
 
 	PostPollTask mPostPollTask;
 	
+	SharedPreferences mPreferences;
+
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);		
+		super.onCreate(savedInstanceState);
+		
+		mPreferences = getPreferences(MODE_PRIVATE);
 
 		createAlertDialogs();
 		setContentView(R.layout.create_poll_fragment);
@@ -83,8 +108,6 @@ public class CreatePoll extends Activity {
 				poll.Options = new ArrayList<String>();
 				poll.Options.add(mEditTextAnswer1.getText().toString());
 				poll.Options.add(mEditTextAnswer2.getText().toString());
-				
-				poll.UserGuid = "929ae5db-76e4-498a-9e8b-81c34838a4a1";
 				
 				mPostPollTask = new PostPollTask();
 				mPostPollTask.execute(poll);
