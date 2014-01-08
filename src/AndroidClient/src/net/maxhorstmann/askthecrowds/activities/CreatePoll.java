@@ -25,7 +25,7 @@ public class CreatePoll extends Activity {
 			BackendService backend = new BackendService();
      		Poll poll = polls[0];
      		
-     		String userGuid = null; //CreatePoll.this.mPreferences.getString("USER_GUID", null);
+     		String userGuid = mPreferences.getString("USER_GUID", null);
 
      		
      		if (userGuid == null) {
@@ -79,7 +79,7 @@ public class CreatePoll extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mPreferences = getPreferences(MODE_PRIVATE);
+		mPreferences = getSharedPreferences("ASK_THE_CROWDS", MODE_PRIVATE);
 
 		createAlertDialogs();
 		setContentView(R.layout.create_poll_fragment);

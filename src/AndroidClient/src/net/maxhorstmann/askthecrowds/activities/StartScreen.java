@@ -32,44 +32,10 @@ public class StartScreen extends Activity {
 		});
 		
 		mTextViewUserGuid = (TextView)findViewById(R.id.textViewUserId);
-		mPreferences = getPreferences(MODE_PRIVATE);
+		mPreferences = getSharedPreferences("ASK_THE_CROWDS", MODE_PRIVATE);
 		mUserGuid = mPreferences.getString("USER_GUID", "");
 		
 		mTextViewUserGuid.setText(mUserGuid);
 	}
-
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.start_screen, menu);
-//		return true;
-//	}
-	
-//	@Override
-//	public void onDestroy()
-//	{
-//		super.onDestroy();
-//		resultDownloader.quit();
-//	}
-	
-//	private class CreateUserTask extends AsyncTask<TextView, Void, String> {
-//
-//		TextView mTextView;
-//		
-//		@Override
-//		protected String doInBackground(TextView... textView) {
-//			mTextView = textView[0];
-//			return new BackendService().createUser();
-//			
-//		}
-//		
-//		@Override
-//		protected void onPostExecute(String result) {
-//			// runs on the UI thread!
-//			mTextView.setText(result);
-//			
-//		}
-//		
-//	}
 
 }
