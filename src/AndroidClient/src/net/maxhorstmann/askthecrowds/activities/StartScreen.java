@@ -38,7 +38,12 @@ public class StartScreen extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mTextViewUserGuid.setText(mLocalStorageService.getUserGuid());
+		String userGuid = mLocalStorageService.getUserGuid();
+		if (userGuid==null)
+		{
+			userGuid = "<no userGuid>";
+		}
+		mTextViewUserGuid.setText(userGuid);
 	}
 
 }

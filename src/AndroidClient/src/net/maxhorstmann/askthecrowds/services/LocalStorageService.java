@@ -14,7 +14,7 @@ public class LocalStorageService {
 	}
 	
 	public String getUserGuid() {
-		return mPreferences.getString(userGuidSetting, "");
+		return mPreferences.getString(userGuidSetting, null);
 	}
 	
 	public boolean putUserGuid(String userGuid) {
