@@ -28,8 +28,30 @@ public class VoteScreen extends Activity {
 		
 		@Override 
 		protected void onPostExecute(Boolean success) {
-			VoteScreen.this.mProgressBar.setVisibility(View.INVISIBLE);
-			// TODO handle success/failure
+			mProgressBar.setVisibility(View.INVISIBLE);
+			if (success) {
+				mPollIndex++;
+				if (mPollIndex >= mPolls.size()) {
+					mPollIndex = 0;
+				}
+				displayPoll();
+			}
+		}
+	}
+	
+	private class GetPollsTask extends AsyncTask<Void, Void, List<Poll>>
+	{
+		@Override
+		protected List<Poll> doInBackground(Void... voids) {
+			return mBackendService.getPolls();
+		}	
+		
+		@Override 
+		protected void onPostExecute(List<Poll> polls) {
+			mProgressBar.setVisibility(View.INVISIBLE);
+			mPolls = polls;
+			mPollIndex = 0;
+			displayPoll();
 		}
 	}
 	
@@ -37,13 +59,16 @@ public class VoteScreen extends Activity {
 	private class OnVoteButtonClickListener implements View.OnClickListener
 	{
 		int mOption;
-		public OnVoteButtonClickListener(int option)
+		Poll mPoll;
+		public OnVoteButtonClickListener(Poll poll, int option)
 		{
-			mOption = option;			
+			mOption = option;		
+			mPoll = poll;
 		}
 		
 		@Override
 		public void onClick(View v) {
+			VoteScreen.this.mProgressBar.setVisibility(View.VISIBLE);
 			Vote vote = new Vote();
 			vote.PollGuid = mPoll.PollGuid;
 			vote.Option = mOption;
@@ -64,27 +89,32 @@ public class VoteScreen extends Activity {
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;
 	
-	Poll mPoll;
+	List<Poll> mPolls;
+	int mPollIndex;
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mPoll = new Poll();
-		mPoll.Question = "Which movie is better?";
-		mPoll.PollGuid = "a2f0399e-cac1-4c51-8a13-a356fb7ff6fd";
-		mPoll.Options = new ArrayList<String>();
-		mPoll.Options.add("Terminator");
-		mPoll.Options.add("Braveheart");
-		
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
-		
+
 		setContentView(R.layout.vote_screen);
-		
+		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 		mTextViewQuestion = (TextView)findViewById(R.id.textViewQuestion);
-		mTextViewQuestion.setText(mPoll.Question);
+		
+		VoteScreen.this.mProgressBar.setVisibility(View.VISIBLE);
+		GetPollsTask getPollsTask = new GetPollsTask();
+		getPollsTask.execute();
+		
+	}
+	
+	private void displayPoll() {
+		
+		Poll poll = mPolls.get(mPollIndex);
+		
+		mTextViewQuestion.setText(poll.Question);
 		
 		mTextViewsOptions = new ArrayList<TextView>();
 		mTextViewsOptions.add((TextView)findViewById(R.id.textViewOption1));
@@ -96,12 +126,11 @@ public class VoteScreen extends Activity {
 		mButtonsVote.add((Button)findViewById(R.id.buttonVote2));
 		// TODO ...
 		
-		for (int i=0; i<mPoll.Options.size(); i++) {
-			mTextViewsOptions.get(i).setText(mPoll.Options.get(i));
-			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(i));			
+		for (int i=0; i<poll.Options.size(); i++) {
+			mTextViewsOptions.get(i).setText(poll.Options.get(i));
+			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(poll, i));			
 		}
 			
-		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
 	}

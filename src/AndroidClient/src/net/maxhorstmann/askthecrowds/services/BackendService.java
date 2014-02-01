@@ -1,6 +1,8 @@
 package net.maxhorstmann.askthecrowds.services;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.List;
 
 import net.maxhorstmann.askthecrowds.models.ApiResult;
 import net.maxhorstmann.askthecrowds.models.Poll;
@@ -9,6 +11,7 @@ import net.maxhorstmann.askthecrowds.models.Vote;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -27,6 +30,24 @@ public class BackendService {
 	
 	public BackendService(LocalStorageService localStorageService) {
 		mLocalStorageService=localStorageService;
+	}
+	
+	public List<Poll> getPolls() {
+		try 
+		{
+			HttpGet get = getHttpGet("polls");
+			HttpResponse response = getHttpClient().execute(get);
+			int responseStatusCode = response.getStatusLine().getStatusCode();
+		    if (responseStatusCode == HttpStatus.SC_OK){
+				Poll[] polls = gson.fromJson(EntityUtils.toString(response.getEntity()), Poll[].class);
+				return Arrays.asList(polls);
+		    }
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}		
+		return null;		
 	}
 
 	public String postPoll(Poll poll) {
@@ -69,6 +90,10 @@ public class BackendService {
 		return false;		
 	}
 	
+	private HttpGet getHttpGet(String route)
+	{
+		return new HttpGet(baseUrl + "/" + route);
+	}
 	
 	private HttpPost getHttpPost(String route, String entity)
 	{
