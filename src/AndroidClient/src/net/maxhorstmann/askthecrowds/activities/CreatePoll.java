@@ -64,7 +64,7 @@ public class CreatePoll extends Activity {
 		mBackendService = new BackendService(mLocalStorageService);
 		
 		createAlertDialogs();
-		setContentView(R.layout.create_poll);
+		setContentView(R.layout.vote_screen);
 		
 		mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
 		mEditTextAnswer1 = (EditText)findViewById(R.id.editTextAnswer1);

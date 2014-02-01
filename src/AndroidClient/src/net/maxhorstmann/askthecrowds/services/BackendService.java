@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 
 import net.maxhorstmann.askthecrowds.models.ApiResult;
 import net.maxhorstmann.askthecrowds.models.Poll;
+import net.maxhorstmann.askthecrowds.models.Vote;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -47,6 +48,27 @@ public class BackendService {
 		}		
 		return null;		
 	}
+	
+	public boolean postVote(Vote vote) {
+		try 
+		{
+			vote.UserGuid = mLocalStorageService.getUserGuid();
+			HttpPost post = getHttpPost("votes", gson.toJson(vote));
+			HttpResponse response = getHttpClient().execute(post);
+			int responseStatusCode = response.getStatusLine().getStatusCode();
+		    if (responseStatusCode == HttpStatus.SC_OK){
+				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
+				mLocalStorageService.putUserGuid(apiResult.UserGuid);				
+				return true;
+		    }
+		}
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}		
+		return false;		
+	}
+	
 	
 	private HttpPost getHttpPost(String route, String entity)
 	{

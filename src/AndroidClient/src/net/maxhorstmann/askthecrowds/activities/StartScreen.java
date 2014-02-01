@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class StartScreen extends Activity {
 	
 	Button mButtonCreatePoll;
+	Button mButtonVoteScreen;
 	TextView mTextViewUserGuid;
 	LocalStorageService mLocalStorageService;
 	
@@ -29,6 +30,17 @@ public class StartScreen extends Activity {
 				startActivity(intent);				
 			}
 		});
+		
+		mButtonVoteScreen = (Button)findViewById(R.id.buttonVote);
+		mButtonVoteScreen.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(StartScreen.this, VoteScreen.class);
+				startActivity(intent);				
+			}
+		});		
+		
 		
 		mTextViewUserGuid = (TextView)findViewById(R.id.textViewUserId);
 		
