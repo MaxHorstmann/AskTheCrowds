@@ -130,29 +130,42 @@ class ApiController extends BaseController
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
         var vote = new Vote.fromJSON(body.body);
-        var userKey = "userGuid:" + vote.UserGuid.toString();
-        redisClient.exists(userKey).then((bool exists){
+        
+        if (vote.UserGuid!=null)
+        {
+          var userKey = "userGuid:" + vote.UserGuid.toString();
+          redisClient.exists(userKey).then((bool exists){
+            if (!exists)
+            {
+              vote.UserGuid = null;
+            }
+          });        
+        }
+        
+        if (vote.UserGuid==null)
+        {
+          var newUser = new User.CreateNew();
+          var json = JSON.encode(newUser);
+          var key = "userGuid:" + newUser.UserGuid;
+          redisClient.set(key, json); // TODO handle success 
+          vote.UserGuid = newUser.UserGuid;
+        }
+                
+        var pollKey = "pollGuid:" + vote.PollGuid.toString() + ":poll";
+        
+        redisClient.exists(pollKey).then((bool exists){
           if (!exists)
           {
-            sendJson(request,new ApiResult("UserGuid not found"),400);
+            sendJson(request,new ApiResult("PollGuid not found", vote.UserGuid),400);
           }
           else
           {
-            var pollKey = "pollGuid:" + vote.PollGuid.toString() + ":poll";
-            redisClient.exists(pollKey).then((bool exists){
-              if (!exists)
-              {
-                sendJson(request,new ApiResult("PollGuid not found"),400);
-              }
-              else
-              {
-                var voteKey = pollKey + ":votes:" + vote.Option.toString();                    
-                redisClient.sadd(voteKey, vote.UserGuid.toString())
-                  .then((_) => sendJson(request,new ApiResult("Voted")));                
-              }
-            });
+            var voteKey = pollKey + ":votes:" + vote.Option.toString();                    
+            redisClient.sadd(voteKey, vote.UserGuid.toString())
+              .then((_) => sendJson(request,new ApiResult("Voted", vote.UserGuid)));                
           }
-        });      
+        });
+        
       });
       return true;                          
     }

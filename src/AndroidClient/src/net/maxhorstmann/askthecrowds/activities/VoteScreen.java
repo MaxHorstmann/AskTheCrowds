@@ -33,6 +33,25 @@ public class VoteScreen extends Activity {
 		}
 	}
 	
+	
+	private class OnVoteButtonClickListener implements View.OnClickListener
+	{
+		int mOption;
+		public OnVoteButtonClickListener(int option)
+		{
+			mOption = option;			
+		}
+		
+		@Override
+		public void onClick(View v) {
+			Vote vote = new Vote();
+			vote.PollGuid = mPoll.PollGuid;
+			vote.Option = mOption;
+			PostVoteTask postVoteTask = new PostVoteTask();
+			postVoteTask.execute(vote);					
+		}	
+	}
+	
 	Button mButtonSkip;
 	Button mButtonFlag;
 	List<Button> mButtonsVote;
@@ -79,18 +98,7 @@ public class VoteScreen extends Activity {
 		
 		for (int i=0; i<mPoll.Options.size(); i++) {
 			mTextViewsOptions.get(i).setText(mPoll.Options.get(i));
-			mButtonsVote.get(i).setOnClickListener(new View.OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Vote vote = new Vote();
-					vote.PollGuid = mPoll.PollGuid;
-					vote.Option = 2; // TODO i !!
-					PostVoteTask postVoteTask = new PostVoteTask();
-					postVoteTask.execute(vote);					
-				}
-			});
-			
+			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(i));			
 		}
 			
 		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
