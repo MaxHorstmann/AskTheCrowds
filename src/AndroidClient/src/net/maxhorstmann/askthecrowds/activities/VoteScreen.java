@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
-public class CreatePoll extends Activity {
+public class VoteScreen extends Activity {
 
 	private class PostPollTask extends AsyncTask<Poll, Void, String>
 	{
@@ -28,7 +28,7 @@ public class CreatePoll extends Activity {
 		
 		@Override 
 		protected void onPostExecute(String result) {
-			CreatePoll.this.mProgressBar.setVisibility(View.INVISIBLE);
+			VoteScreen.this.mProgressBar.setVisibility(View.INVISIBLE);
 			if ((result==null) || (result.length()==0))
 			{
 				mAlertDialogFailure.show();
@@ -64,7 +64,7 @@ public class CreatePoll extends Activity {
 		mBackendService = new BackendService(mLocalStorageService);
 		
 		createAlertDialogs();
-		setContentView(R.layout.create_poll);
+		setContentView(R.layout.create_poll_fragment);
 		
 		mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
 		mEditTextAnswer1 = (EditText)findViewById(R.id.editTextAnswer1);
@@ -106,7 +106,7 @@ public class CreatePoll extends Activity {
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				CreatePoll.this.finish();
+				VoteScreen.this.finish();
 			}
 		});
 		mAlertDialogSuccess = builder.create();
@@ -117,7 +117,7 @@ public class CreatePoll extends Activity {
 		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				CreatePoll.this.mButtonPublish.setEnabled(true);
+				VoteScreen.this.mButtonPublish.setEnabled(true);
 			}
 		});
 		mAlertDialogFailure = builder.create();
