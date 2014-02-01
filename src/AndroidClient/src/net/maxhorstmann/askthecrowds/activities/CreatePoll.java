@@ -23,15 +23,6 @@ public class CreatePoll extends Activity {
 		@Override
 		protected String doInBackground(Poll... polls) {
      		Poll poll = polls[0];
-     		String userGuid = mLocalStorageService.getUserGuid();
-     		if (userGuid == null) {
-     			userGuid = mBackendService.createUser();
-     			if ((userGuid == null) || ((!mLocalStorageService.putUserGuid(userGuid)))) {
-     				return null;
-     			}
-     		}
-     		
-     		poll.UserGuid = userGuid;
 			return mBackendService.postPoll(poll);
 		}	
 		
@@ -69,8 +60,8 @@ public class CreatePoll extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		mBackendService = new BackendService();
 		mLocalStorageService = new LocalStorageService(this);
+		mBackendService = new BackendService(mLocalStorageService);
 		
 		createAlertDialogs();
 		setContentView(R.layout.create_poll_fragment);

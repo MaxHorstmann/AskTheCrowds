@@ -22,35 +22,25 @@ public class BackendService {
 	private final int httpConnectionTimeout = 5000;
 	
 	private final Gson gson = new Gson();
-
-	public String createUser()	{
-		try {
-			HttpPost post = getHttpPost("users", "");
-			HttpResponse response = getHttpClient().execute(post);
-		    if(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-				String jsonResult = EntityUtils.toString(response.getEntity());
-				return gson.fromJson(jsonResult, ApiResult.class).Payload;
-		    }
-		}
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}		
-		return null;			
-	}
+	private LocalStorageService mLocalStorageService;	
 	
+	public BackendService(LocalStorageService localStorageService) {
+		mLocalStorageService=localStorageService;
+	}
+
 	public String postPoll(Poll poll) {
-		
 		try 
 		{
+     		poll.UserGuid = mLocalStorageService.getUserGuid();
 			HttpPost post = getHttpPost("polls", gson.toJson(poll));
 			HttpResponse response = getHttpClient().execute(post);
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
+				mLocalStorageService.putUserGuid(apiResult.UserGuid);				
 				return apiResult.Payload;
 		    }
-		} 
+		}
 		catch (Exception ex)
 		{
 			ex.printStackTrace();

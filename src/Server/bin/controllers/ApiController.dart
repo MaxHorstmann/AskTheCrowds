@@ -23,7 +23,7 @@ class ApiController extends BaseController
   
   bool Users(HttpRequest request)
   {
-      if (request.method == "GET") // TODO admin-only
+      if (request.method == "GET") // TODO admin-only - this route will go away later
       {
         redisClient.keys("userGuid:*").then((List<String> userGuids){
           sendContent(request, userGuids.join('\n'));
@@ -31,15 +31,6 @@ class ApiController extends BaseController
         return true;
       }
 
-      if (request.method == "POST")
-      {
-        var newUser = new User.CreateNew();
-        var json = JSON.encode(newUser);
-        var key = "userGuid:" + newUser.UserGuid;
-        redisClient.set(key, json).then((_) => sendJson(request, new ApiResult(newUser.UserGuid)));
-        return true;      
-      }
-      
       return false;      
   }
 
@@ -49,19 +40,31 @@ class ApiController extends BaseController
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
         var poll = new Poll.fromJSON(body.body, true);
-        var userKey = "userGuid:" + poll.UserGuid.toString();
-        redisClient.exists(userKey).then((bool exists){
-          if (!exists)
-          {
-            sendJson(request,new ApiResult("USERGUID_NOT_FOUND"),400);
-          }
-          else
-          {
-            var key = "pollGuid:" + poll.PollGuid + ":poll";
-            var json = JSON.encode(poll);
-            redisClient.set(key, json).then((_) => sendJson(request,new ApiResult(poll.PollGuid)));
-          }
-        });        
+
+        if (poll.UserGuid!=null)
+        {
+          var userKey = "userGuid:" + poll.UserGuid.toString();
+          redisClient.exists(userKey).then((bool exists){
+            if (!exists)
+            {
+              poll.UserGuid = null;
+            }
+          });        
+        }
+        
+        if (poll.UserGuid==null)
+        {
+          var newUser = new User.CreateNew();
+          var json = JSON.encode(newUser);
+          var key = "userGuid:" + newUser.UserGuid;
+          redisClient.set(key, json); // TODO handle success 
+          poll.UserGuid = newUser.UserGuid;
+        }
+        
+        var key = "pollGuid:" + poll.PollGuid + ":poll";
+        var json = JSON.encode(poll);
+        redisClient.set(key, json).then((_) => sendJson(request,new ApiResult(poll.PollGuid, poll.UserGuid)));
+        
       });
       return true;                          
     }
