@@ -30,11 +30,7 @@ public class VoteScreen extends Activity {
 		protected void onPostExecute(Boolean success) {
 			mProgressBar.setVisibility(View.INVISIBLE);
 			if (success) {
-				mPollIndex++;
-				if (mPollIndex >= mPolls.size()) {
-					mPollIndex = 0;
-				}
-				displayPoll();
+				nextPoll();
 			}
 		}
 	}
@@ -130,9 +126,27 @@ public class VoteScreen extends Activity {
 			mTextViewsOptions.get(i).setText(poll.Options.get(i));
 			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(poll, i));			
 		}
+		
+		mButtonSkip = (Button)findViewById(R.id.buttonSkip);
+		mButtonSkip.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				nextPoll();												
+			}
+		});
 			
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
+	}
+	
+	private void nextPoll()
+	{
+		mPollIndex++;
+		if (mPollIndex >= mPolls.size()) {
+			mPollIndex = 0;
+		}
+		displayPoll();
 	}
 
 }
