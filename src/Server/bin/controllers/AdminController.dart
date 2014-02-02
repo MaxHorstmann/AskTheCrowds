@@ -20,7 +20,15 @@ class AdminController extends BaseController
   
   bool Index(HttpRequest request)
   {
-    sendContent(request, "Admin controller");
+    request.response.statusCode = 200;
+    
+    // users
+    request.response.write("users\n");
+    redisClient.keys("userGuid:*").then((List<String> userGuids){
+      request.response.write(userGuids.join('\n'));
+      request.response.close();
+    });
+    
     return true;  
   }
 

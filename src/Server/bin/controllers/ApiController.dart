@@ -20,19 +20,6 @@ class ApiController extends BaseController
     RedisClient.connect(connectionStringRedis)
       .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
   }
-  
-  bool Users(HttpRequest request)
-  {
-      if (request.method == "GET") // TODO admin-only - this route will go away later
-      {
-        redisClient.keys("userGuid:*").then((List<String> userGuids){
-          sendContent(request, userGuids.join('\n'));
-        });
-        return true;
-      }
-
-      return false;      
-  }
 
   bool Polls(HttpRequest request)
   {
