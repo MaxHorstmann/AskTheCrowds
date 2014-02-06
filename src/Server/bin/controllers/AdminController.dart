@@ -30,7 +30,7 @@ class AdminController extends BaseController
       
       polls.then((List<Poll> polls) {
         request.response.write("\n\n\npolls\n------\n");
-        polls.forEach((Poll p) => request.response.write(p.PollGuid));          
+        polls.forEach((Poll p) => request.response.write(p.PollGuid + "   " + p.Question + "\n"));          
         request.response.close();
       });
       
