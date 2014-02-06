@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.define "Ask the Crowds Server" do
   end
-  config.vm.box = "Ubuntu Server 12.04 amd64"
+  config.vm.box = "Ask the Crowds Server"
   #
   # THE URL FROM WHERE THE 'CONFIG.VM.BOX' BOX WILL BE FETCHED IF IT
   # DOESN'T ALREADY EXIST ON THE USER'S SYSTEM.
@@ -13,6 +13,8 @@ Vagrant.configure("2") do |config|
   # Forward these ports
   config.vm.network :forwarded_port, guest: 6379, host: 6379
   config.vm.network :forwarded_port, guest: 80, host: 8977
+  config.vm.network :forwarded_port, guest: 27017, host: 27017
+  config.vm.network :forwarded_port, guest: 28017, host: 28017  
 
   # Set virtual machine memory size
   config.vm.provider :virtualbox do |vbox|
@@ -20,6 +22,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Start up
+  config.vm.provision :shell, :path => "initMongoDB.sh"
   config.vm.provision :shell, :path => "initRedis.sh"
   config.vm.provision :shell, :path => "initDart.sh"
   config.vm.provision :shell, :path => "initAtcServer.sh"
