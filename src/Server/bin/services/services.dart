@@ -9,8 +9,6 @@ class Services
   static String NewGuid()
   {
     return _uuid.v4();
-  } 
-  
-  
+  }   
   
 }

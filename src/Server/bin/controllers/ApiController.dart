@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import "../models/models.dart";
+import "../services/Db.dart";
 import "BaseController.dart";
 import "package:redis_client/redis_client.dart";
 import 'package:http_server/http_server.dart';
@@ -15,8 +16,13 @@ class ApiController extends BaseController
   String connectionStringRedis;  
   RedisClient redisClient = null;
   
+  Db _db;
+  
   ApiController(this.connectionStringRedis)
   {
+    _db = new Db(connectionStringRedis);
+    
+    // TODO remove Redis dependency
     RedisClient.connect(connectionStringRedis)
       .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
   }
@@ -65,7 +71,7 @@ class ApiController extends BaseController
           var polls = new List<Poll>();
           var futures = new List<Future<Poll>>();
           pollGuids.forEach((String pollGuid) {
-            var pollFuture = GetPoll(pollGuid);
+            var pollFuture = _db.GetPoll(pollGuid);
             pollFuture.then((Poll p) { 
               if (!p.IsClosed) {
                 polls.add(p);
@@ -84,7 +90,7 @@ class ApiController extends BaseController
           this.sendPageNotFound(request); 
         }        
         else {
-          GetPoll(key).then((Poll poll) => sendJson(request, poll));
+          _db.GetPoll(key).then((Poll poll) => sendJson(request, poll));
         }
       });
       return true;
@@ -93,23 +99,6 @@ class ApiController extends BaseController
     return false;           
   }
   
-  Future<Poll> GetPoll(String key)
-  {
-    return redisClient.get(key).then((String value) {
-      var poll = new Poll.fromJSON(value);
-      poll.Votes=new List<int>.filled(poll.Options.length, 0);
-      var futures = new List<Future<int>>();
-      for (var i=0;i<poll.Options.length; i++) {
-        var voteKey = key + ":votes:" + i.toString();
-        var votesFuture = redisClient.scard(voteKey);
-        futures.add(votesFuture);
-        votesFuture.then((int card) {
-          poll.Votes[i]=card; 
-        });
-      }
-      return Future.wait(futures).then((_) => poll);      
-    });
-  }
   
   bool Votes(HttpRequest request)
   {

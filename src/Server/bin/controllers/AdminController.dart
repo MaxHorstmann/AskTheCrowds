@@ -3,30 +3,49 @@ library AdminController;
 import 'dart:io';
 import 'dart:async';
 import "BaseController.dart";
-import "package:redis_client/redis_client.dart";
+import "../models/models.dart";
+import "../services/Db.dart";
 
 
 class AdminController extends BaseController
 {
   
-  String connectionStringRedis;  
-  RedisClient redisClient = null;
+  Db _db;
   
-  AdminController(this.connectionStringRedis)
+  AdminController(String connectionStringRedis)
   {
-    RedisClient.connect(connectionStringRedis)
-      .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
+    _db = new Db(connectionStringRedis);
   }
   
   bool Index(HttpRequest request)
   {
     request.response.statusCode = 200;
     
-    // users
-    request.response.write("users\n");
-    redisClient.keys("userGuid:*").then((List<String> userGuids){
+    Future<List<String>> userGuids = _db.GetUserGuids();
+    Future<List<String>> pollGuids = _db.GetPollGuids();
+
+    userGuids.then((List<String> userGuids) {
+      request.response.write("users\n------\n");
       request.response.write(userGuids.join('\n'));
-      request.response.close();
+      
+      pollGuids.then((List<String> pollGuids) {
+        request.response.write("\npolls\n------\n");
+        request.response.write(pollGuids.join('\n'));
+
+        var polls = new List<Poll>();
+        var futures = new List<Future<Poll>>();
+        pollGuids.forEach((String pollGuid) {
+          var pollFuture = _db.GetPoll(pollGuid);
+          pollFuture.then((Poll p) => polls.add(p));
+          futures.add(pollFuture);
+        });
+        Future.wait(futures).then((_) {
+          polls.forEach((Poll p) => request.response.write(p.PollGuid));          
+        });
+        
+        request.response.close();
+      });
+      
     });
     
     return true;  
