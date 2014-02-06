@@ -20,9 +20,22 @@ class Db
     return redisClient.keys("pollGuid:*:poll");
   }
   
-  Future<List<String>> GetUserGuids()
+  Future<List<Poll>> GetPolls()
   {
-    return redisClient.keys("userGuid:*");    
+    Completer<List<Poll>> completer = new Completer<List<Poll>>();
+    GetPollGuids().then((List<String> pollGuids) {      
+      var polls = new List<Poll>();
+      var futures = new List<Future<Poll>>();
+      pollGuids.forEach((String pollGuid) {
+        var pollFuture = GetPoll(pollGuid);
+        pollFuture.then((Poll p) => polls.add(p));
+        futures.add(pollFuture);
+      });
+      Future.wait(futures).then((_) {
+        completer.complete(polls);        
+      });      
+    });    
+    return completer.future;    
   }
   
   Future<Poll> GetPoll(String key)
@@ -42,6 +55,12 @@ class Db
       return Future.wait(futures).then((_) => poll);      
     });
   }
+  
+  Future<List<String>> GetUserGuids()
+  {
+    return redisClient.keys("userGuid:*");    
+  }
+  
   
 
     

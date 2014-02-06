@@ -22,27 +22,15 @@ class AdminController extends BaseController
     request.response.statusCode = 200;
     
     Future<List<String>> userGuids = _db.GetUserGuids();
-    Future<List<String>> pollGuids = _db.GetPollGuids();
+    Future<List<Poll>> polls = _db.GetPolls();
 
     userGuids.then((List<String> userGuids) {
       request.response.write("users\n------\n");
       request.response.write(userGuids.join('\n'));
       
-      pollGuids.then((List<String> pollGuids) {
-        request.response.write("\npolls\n------\n");
-        request.response.write(pollGuids.join('\n'));
-
-        var polls = new List<Poll>();
-        var futures = new List<Future<Poll>>();
-        pollGuids.forEach((String pollGuid) {
-          var pollFuture = _db.GetPoll(pollGuid);
-          pollFuture.then((Poll p) => polls.add(p));
-          futures.add(pollFuture);
-        });
-        Future.wait(futures).then((_) {
-          polls.forEach((Poll p) => request.response.write(p.PollGuid));          
-        });
-        
+      polls.then((List<Poll> polls) {
+        request.response.write("\n\n\npolls\n------\n");
+        polls.forEach((Poll p) => request.response.write(p.PollGuid));          
         request.response.close();
       });
       
