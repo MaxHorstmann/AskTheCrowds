@@ -49,6 +49,15 @@ class User extends Object with Serializable
     LastRequest = now;
   }
   
+  User.fromJSON(json)
+  {
+    Map userMap = JSON.decode(json);
+    UserGuid = userMap["UserGuid"];
+    Created = new DateTime.fromMillisecondsSinceEpoch(userMap["Created"]);
+    LastRequest = new DateTime.fromMillisecondsSinceEpoch(userMap["LastRequest"]);
+    LastIP = userMap["LastIP"];
+  }
+  
 
 }
 

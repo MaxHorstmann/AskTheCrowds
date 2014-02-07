@@ -6,25 +6,17 @@ import 'dart:async';
 import "../models/models.dart";
 import "../services/Db.dart";
 import "BaseController.dart";
-import "package:redis_client/redis_client.dart";
 import 'package:http_server/http_server.dart';
 
 
 class ApiController extends BaseController
 {
   
-  String connectionStringRedis;  
-  RedisClient redisClient = null;
-  
   Db _db;
   
-  ApiController(this.connectionStringRedis)
+  ApiController(String connectionStringRedis)
   {
     _db = new Db(connectionStringRedis);
-    
-    // TODO remove Redis dependency
-    RedisClient.connect(connectionStringRedis)
-      .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
   }
 
   bool Polls(HttpRequest request)
@@ -36,13 +28,11 @@ class ApiController extends BaseController
 
         if (poll.UserGuid!=null)
         {
-          var userKey = "userGuid:" + poll.UserGuid.toString();
-          redisClient.exists(userKey).then((bool exists){
-            if (!exists)
-            {
+          _db.GetUser(poll.UserGuid).then((User user) {
+            if (user == null) {
               poll.UserGuid = null;
             }
-          });        
+          });
         }
         
         if (poll.UserGuid==null)

@@ -61,7 +61,12 @@ class Db
     return redisClient.keys("userGuid:*");    
   }
   
-  
-
+  Future<User> GetUser(String userGuid)
+  {
+    var userKey = "userGuid:" + userGuid.toString();
+    return redisClient.get(userKey).then((String value) {
+      return new User.fromJSON(value);      
+    });      
+  }
     
 }
