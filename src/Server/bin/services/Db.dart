@@ -61,6 +61,25 @@ class Db
     return redisClient.keys("userGuid:*");    
   }
   
+  Future<List<User>> GetUsers()
+  {
+    Completer<List<User>> completer = new Completer<List<User>>();
+    GetUserGuids().then((List<String> userGuids) {      
+      var users = new List<User>();
+      var futures = new List<Future<User>>();
+      userGuids.forEach((String userGuid) {
+        var userFuture = GetUser(userGuid);
+        userFuture.then((User u) => users.add(u));
+        futures.add(userFuture);
+      });
+      Future.wait(futures).then((_) {
+        completer.complete(users);        
+      });      
+    });    
+    return completer.future;    
+  }
+  
+  
   Future<User> GetUser(String userGuid)
   {
     var userKey = "userGuid:" + userGuid.toString();
