@@ -2,7 +2,7 @@ library Db;
 
 import "package:redis_client/redis_client.dart";
 import 'dart:async';
-import "../models/models.dart";
+import "../models/Models.dart";
 import "../common/Config.dart";
 
 class Db

@@ -3,7 +3,7 @@ library AdminController;
 import 'dart:io';
 import 'dart:async';
 import "BaseController.dart";
-import "../models/models.dart";
+import "../models/Models.dart";
 import "../services/Db.dart";
 
 class AdminController extends BaseController
