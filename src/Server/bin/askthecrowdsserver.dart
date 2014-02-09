@@ -2,19 +2,19 @@ import 'dart:io';
 import "controllers/HomeController.dart";
 import "controllers/ApiController.dart";
 import "controllers/AdminController.dart";
+import "common/Config.dart";
 
 typedef bool Handler(HttpRequest request);
 
 void main() {
   
-  String connectionStringRedis = "127.0.0.1:6379/0";
   
   HttpServer.bind(InternetAddress.ANY_IP_V4, 80).then((HttpServer server) {
     
     var routeTable = new Map<String, Handler>();    
     var homeController = new HomeController();
-    var apiController = new ApiController(connectionStringRedis);
-    var adminController = new AdminController(connectionStringRedis);
+    var apiController = new ApiController(Config.connectionStringRedis);
+    var adminController = new AdminController(Config.connectionStringRedis);
     
     routeTable["/"] = homeController.Index;
     routeTable["/pingdom"] = homeController.Pingdom;
