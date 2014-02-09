@@ -3,15 +3,15 @@ library Db;
 import "package:redis_client/redis_client.dart";
 import 'dart:async';
 import "../models/models.dart";
+import "../common/Config.dart";
 
 class Db
 {
-  String connectionStringRedis;  
   RedisClient redisClient = null;
   
-  Db(this.connectionStringRedis)
+  Db()
   {
-    RedisClient.connect(connectionStringRedis)
+    RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
   }
   

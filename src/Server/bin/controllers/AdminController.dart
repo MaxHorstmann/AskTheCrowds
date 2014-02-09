@@ -6,16 +6,10 @@ import "BaseController.dart";
 import "../models/models.dart";
 import "../services/Db.dart";
 
-
 class AdminController extends BaseController
 {
   
-  Db _db;
-  
-  AdminController(String connectionStringRedis)
-  {
-    _db = new Db(connectionStringRedis);
-  }
+  Db _db = new Db();
   
   bool Index(HttpRequest request)
   {

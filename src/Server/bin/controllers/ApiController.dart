@@ -12,13 +12,8 @@ import 'package:http_server/http_server.dart';
 class ApiController extends BaseController
 {
   
-  Db _db;
+  Db _db  = new Db();
   
-  ApiController(String connectionStringRedis)
-  {
-    _db = new Db(connectionStringRedis);
-  }
-
   bool Polls(HttpRequest request)
   {
     if (request.method == "POST")  
@@ -40,13 +35,13 @@ class ApiController extends BaseController
           var newUser = new User.CreateNew();
           var json = JSON.encode(newUser);
           var key = "userGuid:" + newUser.UserGuid;
-          redisClient.set(key, json); // TODO handle success 
+          //redisClient.set(key, json); // TODO handle success 
           poll.UserGuid = newUser.UserGuid;
         }
         
         var key = "pollGuid:" + poll.PollGuid + ":poll";
         var json = JSON.encode(poll);
-        redisClient.set(key, json).then((_) => sendJson(request,new ApiResult(poll.PollGuid, poll.UserGuid)));
+        //redisClient.set(key, json).then((_) => sendJson(request,new ApiResult(poll.PollGuid, poll.UserGuid)));
         
       });
       return true;                          

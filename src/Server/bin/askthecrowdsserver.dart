@@ -2,7 +2,6 @@ import 'dart:io';
 import "controllers/HomeController.dart";
 import "controllers/ApiController.dart";
 import "controllers/AdminController.dart";
-import "common/Config.dart";
 
 typedef bool Handler(HttpRequest request);
 
@@ -13,8 +12,8 @@ void main() {
     
     var routeTable = new Map<String, Handler>();    
     var homeController = new HomeController();
-    var apiController = new ApiController(Config.connectionStringRedis);
-    var adminController = new AdminController(Config.connectionStringRedis);
+    var apiController = new ApiController();
+    var adminController = new AdminController();
     
     routeTable["/"] = homeController.Index;
     routeTable["/pingdom"] = homeController.Pingdom;
