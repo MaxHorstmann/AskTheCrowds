@@ -52,7 +52,7 @@ class ApiController extends BaseController
       if (!request.uri.queryParameters.containsKey("pollGuid"))
       {
         _db.GetPolls().then((List<Poll> polls) {
-          sendJson(request, polls);
+          //sendJson(request, polls.toString()); // TODO
         });
       }
       else {
