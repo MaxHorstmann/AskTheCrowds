@@ -21,12 +21,12 @@ class AdminController extends BaseController
   {
     request.response.statusCode = 200;
     
-    Future<List<String>> userGuids = _db.GetUserGuids();
+    Future<List<User>> users = _db.GetUsers();
     Future<List<Poll>> polls = _db.GetPolls();
 
-    userGuids.then((List<String> userGuids) {
+    users.then((List<User> users) {
       request.response.write("users\n------\n");
-      request.response.write(userGuids.join('\n'));
+      users.forEach((User u) => request.response.write(u.UserGuid + "   " + u.Created.toString() + "\n"));          
       
       polls.then((List<Poll> polls) {
         request.response.write("\n\n\npolls\n------\n");
