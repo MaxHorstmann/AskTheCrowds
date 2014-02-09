@@ -6,7 +6,7 @@ import "../models/Models.dart";
 import "../common/Config.dart";
 import "../services/Services.dart";
 
-class Db
+class Db<T>
 {
   RedisClient redisClient = null;
   
@@ -16,15 +16,25 @@ class Db
       .then((RedisClient redisClientNew) { redisClient = redisClientNew; });    
   }
   
-  Future<List<String>> GetPollGuids()
+  Future<Set<String>> GetEntityGuids()
   {
-    return redisClient.keys("pollGuid:*:poll");
+    var key = "idx:" + entityName;
+    Completer<Set<String>> completer = new Completer<Set<String>>();
+    redisClient.exists(key).then((bool exists) {
+      if (!exists) {
+        completer.complete(new Set<String>()); // empty set
+      }
+      redisClient.smembers(key).then((Set<String> pollGuids) {
+        completer.complete(pollGuids);
+      });
+    });
+    return completer.future;
   }
   
-  Future<List<Poll>> GetPolls()
+  Future<List<T>> GetEntity()
   {
     Completer<List<Poll>> completer = new Completer<List<Poll>>();
-    GetPollGuids().then((List<String> pollGuids) {      
+    GetEntityGuids("polls").then((Set<String> pollGuids) {  
       var polls = new List<Poll>();
       var futures = new List<Future<Poll>>();
       pollGuids.forEach((String pollGuid) {
@@ -65,29 +75,32 @@ class Db
     
     Completer<bool> completer = new Completer<bool>();
     
-    var key = "pollGuid:" + poll.PollGuid + ":poll";
+    var key = "pollGuid:" + poll.PollGuid;
     var json = poll.toJson();
-    redisClient.set(key, json).then((_) {
-      completer.complete(true);
+    
+    redisClient.sadd("idx:users", poll.PollGuid).then((int elementsAdded) {
+      redisClient.set(key, json).then((_) {
+        completer.complete(true);
+      });
     });
     
+    
     return completer.future;    
-  }
-  
-  Future<List<String>> GetUserGuids()
-  {
-    return redisClient.keys("userGuid:*");    
   }
   
   Future<List<User>> GetUsers()
   {
     Completer<List<User>> completer = new Completer<List<User>>();
-    GetUserGuids().then((List<String> userGuids) {      
+    GetUserGuids().then((Set<String> userGuids) {      
       var users = new List<User>();
       var futures = new List<Future<User>>();
       userGuids.forEach((String userGuid) {
         var userFuture = GetUser(userGuid);
-        userFuture.then((User u) => users.add(u));
+        userFuture.then((User u) {
+          if (u != null) {
+            users.add(u); 
+          }
+        });
         futures.add(userFuture);
       });
       Future.wait(futures).then((_) {
@@ -110,13 +123,16 @@ class Db
     if (user.UserGuid == null) {
       user.UserGuid = Services.NewGuid();
     }
+    
     var key = "userGuid:" + user.UserGuid;
     var json = user.toJson();
     
     Completer<bool> completer = new Completer<bool>();
     
-    redisClient.set(key, json).then((_) {
-      completer.complete(true);
+    redisClient.sadd("idx:users", user.UserGuid).then((int elementsAdded) {
+      redisClient.set(key, json).then((_) {
+        completer.complete(true);
+      });
     });
     
     return completer.future;    
