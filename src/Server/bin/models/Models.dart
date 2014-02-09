@@ -30,6 +30,12 @@ class Poll extends Object with Serializable
     UserGuid = pollMap["UserGuid"];
   }
   
+  String toJSON()
+  {
+    return JSON.encode(this);    
+  }
+  
+  
  }
 
 class User extends Object with Serializable
@@ -58,6 +64,12 @@ class User extends Object with Serializable
     //LastIP = userMap["LastIP"];
   }
   
+  String toJSON()
+  {
+    return JSON.encode(this);    
+  }
+
+  
 
 }
 
@@ -75,6 +87,12 @@ class Vote extends Object with Serializable
     PollGuid = voteMap["PollGuid"];
     Option = voteMap["Option"];
   }
+  
+  String toJSON()
+  {
+    return JSON.encode(this);    
+  }
+
 }
 
 class ApiResult extends Object with Serializable
@@ -82,4 +100,10 @@ class ApiResult extends Object with Serializable
   String Payload;
   String UserGuid;
   ApiResult(this.Payload, this.UserGuid);  
+  
+  String toJSON()
+  {
+    return JSON.encode(this);    
+  }
+
 }

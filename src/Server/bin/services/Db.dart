@@ -4,6 +4,7 @@ import "package:redis_client/redis_client.dart";
 import 'dart:async';
 import "../models/Models.dart";
 import "../common/Config.dart";
+import "../services/Services.dart";
 
 class Db
 {
@@ -56,6 +57,23 @@ class Db
     });
   }
   
+  Future<bool> SavePoll(Poll poll) {
+    
+    if (poll.PollGuid == null) {
+       poll.PollGuid = Services.NewGuid();
+    }
+    
+    Completer<bool> completer = new Completer<bool>();
+    
+    var key = "pollGuid:" + poll.PollGuid + ":poll";
+    var json = poll.toJson();
+    redisClient.set(key, json).then((_) {
+      completer.complete(true);
+    });
+    
+    return completer.future;    
+  }
+  
   Future<List<String>> GetUserGuids()
   {
     return redisClient.keys("userGuid:*");    
@@ -86,6 +104,22 @@ class Db
     return redisClient.get(userKey).then((String value) {
       return new User.fromJSON(value);      
     });      
+  }
+  
+  Future<bool> SaveUser(User user) {
+    if (user.UserGuid == null) {
+      user.UserGuid = Services.NewGuid();
+    }
+    var key = "userGuid:" + user.UserGuid;
+    var json = user.toJson();
+    
+    Completer<bool> completer = new Completer<bool>();
+    
+    redisClient.set(key, json).then((_) {
+      completer.complete(true);
+    });
+    
+    return completer.future;    
   }
     
 }
