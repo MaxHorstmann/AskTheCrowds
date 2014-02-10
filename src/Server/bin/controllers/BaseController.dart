@@ -3,7 +3,6 @@ library BaseController;
 import 'dart:io';
 import 'dart:convert';
 import "../services/Services.dart";
-import "../models/Serializable.dart";
 
 abstract class BaseController
 {
@@ -17,9 +16,9 @@ abstract class BaseController
     request.response.close();
   }
   
-  void sendJson(HttpRequest request, Serializable payload, [ int statusCode = 200 ])
+  void sendJson(HttpRequest request, Object payload, [ int statusCode = 200 ])
   {
-    sendJsonRaw(request,JSON.encode(payload.toJson()),statusCode);
+    sendJsonRaw(request,JSON.encode(payload),statusCode);
   }  
   
   void sendJsonRaw(HttpRequest request, String json, [ int statusCode = 200 ])

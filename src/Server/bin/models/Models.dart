@@ -2,11 +2,10 @@ library models;
 
 import 'dart:convert';
 import 'Serializable.dart';
-import '../services/Services.dart';
 
 class Poll extends Object with Serializable
 {
-  String UserGuid;
+  String UserUuid;
   int CategoryId;
   DateTime Created; 
   int DurationHours;
@@ -25,7 +24,7 @@ class Poll extends Object with Serializable
     DurationHours = pollMap["DurationHours"];
     Question = pollMap["Question"];
     Options = pollMap["Options"];
-    UserGuid = pollMap["UserGuid"];
+    UserUuid = pollMap["UserUuid"];
   }
   
 

@@ -3,45 +3,39 @@ library ApiController;
 import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
+import 'package:http_server/http_server.dart';
+import "BaseController.dart";
 import "../models/Models.dart";
 import "../services/Db.dart";
-import "BaseController.dart";
-import 'package:http_server/http_server.dart';
 
 
 class ApiController extends BaseController
 {
   
-  Db _db  = new Db();
+  Db _polls  = new Db<Poll>("poll");
+  Db _users  = new Db<User>("user");
   
   bool Polls(HttpRequest request)
   {
     if (request.method == "POST")  
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
-        var poll = new Poll.fromJSON(body.body, true);
-        
-        var user = _db.GetUser(poll.UserGuid).then((User user) {
-          
-          if (user == null) {
-            
+        var poll = new Poll.fromJSON(body.body);
+        poll.Created = new DateTime.now();        
+        var user = _users.Single(poll.UserUuid).then((User user) {          
+          if (user == null) {            
             var newUser = new User.CreateNew();
-            poll.UserGuid = newUser.UserGuid;
-            _db.SaveUser(newUser).then((bool success) {
-              
-              _db.SavePoll(poll).then((bool success) {
-                // TODO indicate failure
-                sendJson(request, new ApiResult(poll.PollGuid, poll.UserGuid));
-              });
-              
+            _users.Save(newUser).then((bool success) {
+              poll.UserUuid = newUser.Uuid;              
+              _polls.Save(poll).then((bool success) {
+                sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
+              });              
             });
           } else {
-            _db.SavePoll(poll).then((bool success) {
-              // TODO indicate failure
-              sendJson(request, new ApiResult(poll.PollGuid, poll.UserGuid));
+            _users.Save(poll).then((bool success) {
+              sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
             });
-          }
-          
+          }          
         });
       });
       return true;                          
@@ -49,15 +43,15 @@ class ApiController extends BaseController
     
     if (request.method == "GET")  
     { 
-      if (!request.uri.queryParameters.containsKey("pollGuid"))
+      if (!request.uri.queryParameters.containsKey("pollUuid"))
       {
-        _db.GetPolls().then((List<Poll> polls) {
-          //sendJson(request, polls.toString()); // TODO
+        _polls.All().then((List<Poll> polls) {
+          sendJson(request, polls);
         });
       }
       else {
-        var pollGuid = request.uri.queryParameters["pollGuid"];
-        _db.GetPoll(pollGuid).then((Poll poll) {
+        var pollUuid = request.uri.queryParameters["pollUuid"];
+        _polls.Single(pollUuid).then((Poll poll) {
           if (poll == null) { 
             this.sendPageNotFound(request); 
           }        
@@ -96,9 +90,9 @@ class ApiController extends BaseController
         {
           var newUser = new User.CreateNew();
           var json = JSON.encode(newUser);
-          var key = "userGuid:" + newUser.UserGuid;
+          //var key = "userGuid:" + newUser.UserGuid;
           //redisClient.set(key, json); // TODO handle success 
-          vote.UserGuid = newUser.UserGuid;
+          //vote.UserGuid = newUser.UserGuid;
         }
                 
         var pollKey = "pollGuid:" + vote.PollGuid.toString() + ":poll";
