@@ -3,6 +3,7 @@ library Db;
 import "package:redis_client/redis_client.dart";
 import 'dart:async';
 import 'dart:convert';
+import 'dart:mirrors';
 import "package:uuid/uuid.dart";
 import "../common/Config.dart";
 import "../models/Serializable.dart";
@@ -16,7 +17,13 @@ class Db<T extends Serializable>
   static Uuid _uuid = new Uuid();
 
   String _entityName;
-  Db(this._entityName);
+  
+  Db()
+  {
+    ClassMirror cm = reflect(this).type;
+    var symbol = cm.typeArguments[0].qualifiedName;
+    _entityName = symbol.toString();
+  }
   
   Future<List<T>> All()
   {
@@ -58,14 +65,20 @@ class Db<T extends Serializable>
     return completer.future;
   }
   
-  Future<T> Single(String guid)
+  Future<T> Single(String uuid)
   {
     Completer<T> completer = new Completer<T>();
     
     RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient redisClient) {
-        return redisClient.get(guid).then((String json) {          
-          completer.complete(json == null ? null : Serializable.fromJSON(json));
+        return redisClient.get(uuid).then((String json) {   
+          if (json == null) {
+            completer.complete(null);
+            return;
+          }
+          T fromJson = FromJson(json);
+          fromJson.Uuid = uuid;
+          completer.complete(fromJson);
         });
       });
     
@@ -75,7 +88,18 @@ class Db<T extends Serializable>
   
   T FromJson(String json)
   {
-    return null;
+    if (json == null) {
+      return null;
+    }
+    
+    ClassMirror cm = reflect(this).type;
+    ClassMirror cm2 = cm.typeArguments[0] as ClassMirror;
+    InstanceMirror instanceMirror = cm2.newInstance(const Symbol("fromJSON"), [ json ]);
+    T newInstance =  instanceMirror.reflectee;
+    return newInstance;
+    
+       
+    
   }
   
   Future<bool> Save(T entity) {

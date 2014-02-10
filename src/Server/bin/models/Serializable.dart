@@ -8,11 +8,6 @@ abstract class Serializable {
 
   String Uuid;
   
-  static Serializable fromJSON(json)
-  {
-    // override in child class
-  }
-  
   Map toJson() { 
     Map map = new Map();
     InstanceMirror im = reflect(this);
@@ -26,5 +21,6 @@ abstract class Serializable {
 
     return map;
   }  
-
+  
+  
 }

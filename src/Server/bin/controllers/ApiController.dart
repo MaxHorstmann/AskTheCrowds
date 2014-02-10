@@ -12,8 +12,8 @@ import "../services/Db.dart";
 class ApiController extends BaseController
 {
   
-  Db _polls  = new Db<Poll>("poll");
-  Db _users  = new Db<User>("user");
+  Db _polls  = new Db<Poll>();
+  Db _users  = new Db<User>();
   
   bool Polls(HttpRequest request)
   {

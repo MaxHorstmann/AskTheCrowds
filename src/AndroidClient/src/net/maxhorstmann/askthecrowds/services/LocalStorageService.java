@@ -7,19 +7,19 @@ public class LocalStorageService {
 
 	SharedPreferences mPreferences;
 	
-	private final String userGuidSetting = "USER_GUID";
+	private final String userUuidSetting = "USER_GUID";
 	
 	public LocalStorageService(Activity activity){
 		mPreferences = activity.getSharedPreferences("ASK_THE_CROWDS", Activity.MODE_PRIVATE);
 	}
 	
-	public String getUserGuid() {
-		return mPreferences.getString(userGuidSetting, null);
+	public String getUserUuid() {
+		return mPreferences.getString(userUuidSetting, null);
 	}
 	
-	public boolean putUserGuid(String userGuid) {
+	public boolean putUserUuid(String userUuid) {
 		SharedPreferences.Editor editor = mPreferences.edit();
-		editor.putString(userGuidSetting, userGuid);
+		editor.putString(userUuidSetting, userUuid);
 		return editor.commit();
 	}	
 

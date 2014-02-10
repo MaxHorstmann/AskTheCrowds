@@ -50,7 +50,7 @@ public class StartScreen extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		String userGuid = mLocalStorageService.getUserGuid();
+		String userGuid = mLocalStorageService.getUserUuid();
 		if (userGuid==null)
 		{
 			userGuid = "<no userGuid>";

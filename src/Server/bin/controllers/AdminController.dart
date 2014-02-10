@@ -9,8 +9,8 @@ import "../services/Db.dart";
 class AdminController extends BaseController
 {
   
-  Db _users = new Db<User>("user");
-  Db _polls = new Db<Poll>("poll");
+  Db _users = new Db<User>();
+  Db _polls = new Db<Poll>();
   
   bool Index(HttpRequest request)
   {
