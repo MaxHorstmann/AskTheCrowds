@@ -1,13 +1,19 @@
 library Serializable;
 
-import 'dart:convert';
 import 'dart:mirrors';
 
 // http://stackoverflow.com/questions/20024298/add-json-serializer-to-every-model-class
 
 abstract class Serializable {
 
-  String toJson() { 
+  String Guid;
+  
+  static Serializable fromJSON(json, [ bool createNew = false ])
+  {
+    // override in child class
+  }
+  
+  Map toJson() { 
     Map map = new Map();
     InstanceMirror im = reflect(this);
     ClassMirror cm = im.type;
@@ -25,7 +31,7 @@ abstract class Serializable {
       }
     });
 
-    return JSON.encode(map);
+    return map;
   }  
 
 }

@@ -1,6 +1,6 @@
 import 'dart:io';
 import "controllers/HomeController.dart";
-import "controllers/ApiController.dart";
+//import "controllers/ApiController.dart";
 import "controllers/AdminController.dart";
 
 typedef bool Handler(HttpRequest request);
@@ -12,14 +12,14 @@ void main() {
     
     var routeTable = new Map<String, Handler>();    
     var homeController = new HomeController();
-    var apiController = new ApiController();
+    //var apiController = new ApiController();
     var adminController = new AdminController();
     
     routeTable["/"] = homeController.Index;
     routeTable["/pingdom"] = homeController.Pingdom;
     routeTable["/admin"] = adminController.Index;
-    routeTable["/api/polls"] = apiController.Polls;
-    routeTable["/api/votes"] = apiController.Votes;
+    //routeTable["/api/polls"] = apiController.Polls;
+    //routeTable["/api/votes"] = apiController.Votes;
     
     server.listen((HttpRequest request) {
       
