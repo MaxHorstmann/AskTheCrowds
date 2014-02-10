@@ -6,9 +6,9 @@ import 'dart:mirrors';
 
 abstract class Serializable {
 
-  String Guid;
+  String Uuid;
   
-  static Serializable fromJSON(json, [ bool createNew = false ])
+  static Serializable fromJSON(json)
   {
     // override in child class
   }
@@ -21,14 +21,7 @@ abstract class Serializable {
     decls.forEach((dm) {
       var key = MirrorSystem.getName(dm.simpleName);
       var val = im.getField(dm.simpleName).reflectee;
-      if (val is DateTime)
-      {
-        map[key] = val.millisecondsSinceEpoch;
-      }
-      else
-      {
-        map[key] = val;
-      }
+      map[key] = (val is DateTime) ? val.millisecondsSinceEpoch : val;
     });
 
     return map;

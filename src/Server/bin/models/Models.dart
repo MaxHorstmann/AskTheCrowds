@@ -6,7 +6,6 @@ import '../services/Services.dart';
 
 class Poll extends Object with Serializable
 {
-  String PollGuid;
   String UserGuid;
   int CategoryId;
   DateTime Created; 
@@ -19,11 +18,10 @@ class Poll extends Object with Serializable
   bool get IsClosed => new DateTime.now().difference(Created).inHours > DurationHours;
   
   Poll();
-  Poll.fromJSON(json, [ bool createNew = false ])
+  Poll.fromJSON(json)
   {
     Map pollMap = JSON.decode(json);
-    PollGuid = createNew ? Services.NewGuid() : pollMap["PollGuid"];
-    Created = createNew ? new DateTime.now() : new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
+    Created = new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
     DurationHours = pollMap["DurationHours"];
     Question = pollMap["Question"];
     Options = pollMap["Options"];
@@ -35,7 +33,6 @@ class Poll extends Object with Serializable
 
 class User extends Object with Serializable
 {
-  String UserGuid;
   DateTime Created;
   DateTime LastRequest;
   String LastIP;
@@ -45,7 +42,6 @@ class User extends Object with Serializable
   User.CreateNew()
   {
     var now = new DateTime.now();
-    UserGuid = Services.NewGuid();
     Created = now;
     LastRequest = now;
   }
@@ -53,14 +49,12 @@ class User extends Object with Serializable
   User.fromJSON(json)
   {
     Map userMap = JSON.decode(json);
-    UserGuid = userMap["UserGuid"];
+    Uuid = userMap["Uuid"];
     //Created = new DateTime.fromMillisecondsSinceEpoch(userMap["Created"]);
     //LastRequest = new DateTime.fromMillisecondsSinceEpoch(userMap["LastRequest"]);
     //LastIP = userMap["LastIP"];
   }
   
- 
-
 }
 
 class Vote extends Object with Serializable

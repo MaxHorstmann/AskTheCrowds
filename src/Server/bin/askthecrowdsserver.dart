@@ -18,6 +18,7 @@ void main() {
     routeTable["/"] = homeController.Index;
     routeTable["/pingdom"] = homeController.Pingdom;
     routeTable["/admin"] = adminController.Index;
+    routeTable["/addTestData"] = adminController.AddTestData;
     //routeTable["/api/polls"] = apiController.Polls;
     //routeTable["/api/votes"] = apiController.Votes;
     

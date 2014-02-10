@@ -2,13 +2,19 @@ library Db;
 
 import "package:redis_client/redis_client.dart";
 import 'dart:async';
+import 'dart:convert';
+import "package:uuid/uuid.dart";
 import "../common/Config.dart";
 import "../models/Serializable.dart";
-import "../services/Services.dart";
+
+
+// --- make this a package at some point, something like redis_orm ----
 
 
 class Db<T extends Serializable>
-{
+{  
+  static Uuid _uuid = new Uuid();
+
   String _entityName;
   Db(this._entityName);
   
@@ -39,13 +45,12 @@ class Db<T extends Serializable>
     Completer<Set<String>> completer = new Completer<Set<String>>();
     RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient redisClient) { 
-        var key = "idx:" + _entityName;
-        redisClient.exists(key).then((bool exists) {
+        redisClient.exists(GetKey()).then((bool exists) {
           if (!exists) {
             completer.complete(new Set<String>()); // empty set
             return;
           }
-          redisClient.smembers(key).then((Set<String> pollGuids) {
+          redisClient.smembers(GetKey()).then((Set<String> pollGuids) {
             completer.complete(pollGuids);
           });
         });
@@ -77,17 +82,17 @@ class Db<T extends Serializable>
 
     Completer<bool> completer = new Completer<bool>();
     
-    if (entity.Guid == null) {
-      entity.Guid = Services.NewGuid();
+    if (entity.Uuid == null) {
+      entity.Uuid = _uuid.v4();
     }
         
-    var json = entity.toJson();
+    var json = JSON.encode(entity);
     
     RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient redisClient) {
-        var key = "idx:" + _entityName;
-        redisClient.sadd(key, entity.Guid).then((int elementsAdded) {
-          redisClient.set(key, json).then((_) {
+        var key = GetKey();
+        redisClient.sadd(key, entity.Uuid).then((int elementsAdded) {
+          redisClient.set(entity.Uuid, json).then((_) {
             completer.complete(true);
           });
         });
@@ -96,8 +101,10 @@ class Db<T extends Serializable>
     return completer.future;    
   }
   
-
-  
+  String GetKey()
+  {
+    return "idx:" + _entityName;
+  }
   
  
 }
