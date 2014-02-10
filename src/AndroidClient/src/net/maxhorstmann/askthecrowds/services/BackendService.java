@@ -22,7 +22,7 @@ import com.google.gson.Gson;
 
 public class BackendService {
 	
-	private final String baseUrl = "http://192.168.1.2/api";
+	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
 	private final int httpConnectionTimeout = 5000;
 	
 	private final Gson gson = new Gson();
