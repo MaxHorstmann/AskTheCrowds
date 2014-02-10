@@ -32,7 +32,7 @@ class ApiController extends BaseController
               });              
             });
           } else {
-            _users.Save(poll).then((bool success) {
+            _polls.Save(poll).then((bool success) {
               sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
             });
           }          
