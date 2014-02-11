@@ -10,6 +10,8 @@ abstract class Serializable {
   
   Map toJson() { 
     Map map = new Map();
+    map["Uuid"] = Uuid;
+    
     InstanceMirror im = reflect(this);
     ClassMirror cm = im.type;
     var decls = cm.declarations.values.where((dm) => dm is VariableMirror);
@@ -21,7 +23,7 @@ abstract class Serializable {
       if (!(val is DateTime)) {
         map[key] = val;
       }
-    });
+    });    
 
     return map;
   }  

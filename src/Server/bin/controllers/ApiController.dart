@@ -43,14 +43,14 @@ class ApiController extends BaseController
     
     if (request.method == "GET")  
     { 
-      if (!request.uri.queryParameters.containsKey("pollUuid"))
+      if (!request.uri.queryParameters.containsKey("uuid"))
       {
         _polls.Where((Poll p) => !p.IsClosed).then((List<Poll> polls) {
           sendJson(request, polls);
         });
       }
       else {
-        var pollUuid = request.uri.queryParameters["pollUuid"];
+        var pollUuid = request.uri.queryParameters["uuid"];
         _polls.Single(pollUuid).then((Poll poll) {
           if (poll == null) { 
             this.sendPageNotFound(request); 
