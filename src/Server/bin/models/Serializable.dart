@@ -16,7 +16,11 @@ abstract class Serializable {
     decls.forEach((dm) {
       var key = MirrorSystem.getName(dm.simpleName);
       var val = im.getField(dm.simpleName).reflectee;
-      map[key] = (val is DateTime) ? val.millisecondsSinceEpoch : val;
+      
+      // TODO deal with DateTime - then file a bug with Dart team 
+      if (!(val is DateTime)) {
+        map[key] = val;
+      }
     });
 
     return map;

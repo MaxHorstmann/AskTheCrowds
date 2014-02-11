@@ -1,6 +1,5 @@
 library models;
 
-import 'dart:convert';
 import 'Serializable.dart';
 
 class Poll extends Object with Serializable
@@ -14,20 +13,7 @@ class Poll extends Object with Serializable
   List<String> Options;
   List<int> Votes;
   
-  bool get IsClosed => new DateTime.now().difference(Created).inHours > DurationHours;
-  
-  Poll();
-  Poll.fromJSON(json)
-  {
-    Map pollMap = JSON.decode(json);
-    Created = new DateTime.fromMillisecondsSinceEpoch(pollMap["Created"]);
-    DurationHours = pollMap["DurationHours"];
-    Question = pollMap["Question"];
-    Options = pollMap["Options"];
-    UserUuid = pollMap["UserUuid"];
-  }
-  
-
+  bool get IsClosed => (Created!=null) && (new DateTime.now().difference(Created).inHours > DurationHours);
  }
 
 class User extends Object with Serializable
@@ -44,16 +30,6 @@ class User extends Object with Serializable
     Created = now;
     LastRequest = now;
   }
-  
-  User.fromJSON(json)
-  {
-    Map userMap = JSON.decode(json);
-    Uuid = userMap["Uuid"];
-    //Created = new DateTime.fromMillisecondsSinceEpoch(userMap["Created"]);
-    //LastRequest = new DateTime.fromMillisecondsSinceEpoch(userMap["LastRequest"]);
-    //LastIP = userMap["LastIP"];
-  }
-  
 }
 
 class Vote extends Object with Serializable
@@ -61,17 +37,6 @@ class Vote extends Object with Serializable
   String UserUuid;
   String PollUuid;
   int Option;
-  
-  Vote();
-  Vote.fromJSON(json)
-  {
-    Map voteMap = JSON.decode(json);
-    UserUuid = voteMap["UserUuid"];
-    PollUuid = voteMap["PollUuid"];
-    Option = voteMap["Option"];
-  }
-
-
 }
 
 class ApiResult extends Object with Serializable
@@ -79,5 +44,4 @@ class ApiResult extends Object with Serializable
   String Payload;
   String UserUuid;
   ApiResult(this.Payload, this.UserUuid);  
-
 }
