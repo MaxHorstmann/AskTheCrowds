@@ -2,12 +2,10 @@ library BaseController;
 
 import 'dart:io';
 import 'dart:convert';
-import "../services/Services.dart";
 
 abstract class BaseController
 {
   
-  Services services = new Services();
 
   void sendContent(HttpRequest request, String content, [ int statusCode = 200 ])
   {

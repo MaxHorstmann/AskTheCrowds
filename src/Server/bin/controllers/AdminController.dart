@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:async';
 import "BaseController.dart";
 import "../models/Models.dart";
-import "../services/Db.dart";
+import "../models/Db.dart";
 
 class AdminController extends BaseController
 {

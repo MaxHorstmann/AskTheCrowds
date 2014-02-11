@@ -5,8 +5,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:mirrors';
 import "package:uuid/uuid.dart";
-import "../common/Config.dart";
-import "../models/Serializable.dart";
+import '../common/Config.dart';
+import 'Serializable.dart';
 
 
 // --- make this a package at some point, something like redis_orm ----
