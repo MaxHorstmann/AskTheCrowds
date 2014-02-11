@@ -7,6 +7,7 @@ import 'dart:mirrors';
 import "package:uuid/uuid.dart";
 import '../common/Config.dart';
 import 'Serializable.dart';
+import 'Json.dart';
 
 
 // --- make this a package at some point, something like redis_orm ----
@@ -15,14 +16,17 @@ import 'Serializable.dart';
 class Db<T extends Serializable>
 {  
   static Uuid _uuid = new Uuid();
+  
 
   String _entityName;
+  Json<T> _json;
   
   Db()
   {
     ClassMirror cm = reflect(this).type;
     var symbol = cm.typeArguments[0].qualifiedName;
     _entityName = symbol.toString();
+    _json = new Json<T>();
   }
   
   Future<List<T>> All()
@@ -81,7 +85,7 @@ class Db<T extends Serializable>
             completer.complete(null);
             return;
           }
-          T fromJson = FromJson(json);
+          T fromJson = _json.FromJson(json);
           fromJson.Uuid = uuid;
           completer.complete(fromJson);
         });
@@ -91,27 +95,6 @@ class Db<T extends Serializable>
     
   }
   
-  T FromJson(String json)
-  {
-    if (json == null) {
-      return null;
-    }
-    
-    ClassMirror cm = reflect(this).type;
-    ClassMirror cm2 = cm.typeArguments[0] as ClassMirror;
-    
-    InstanceMirror instanceMirror = cm2.newInstance(const Symbol(""), []);
-    T newInstance =  instanceMirror.reflectee;
-    
-    Map pollMap = JSON.decode(json);
-    pollMap.forEach((String K, Object V) {
-      Symbol symbol = new Symbol(K);
-      DeclarationMirror dm = cm2.declarations[symbol];
-      instanceMirror.setField(symbol, V);
-    });
-    
-    return newInstance;
-  }
   
   Future<bool> Save(T entity) {
 

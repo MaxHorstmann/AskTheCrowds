@@ -11,7 +11,9 @@ class Poll extends Object with Serializable
   String Language;
   String Question;
   List<String> Options;
-  List<int> Votes;
+  
+  List<Set<String>> Votes;
+  List<int> VoteCounts;
   
   bool get IsClosed => (Created!=null) && (new DateTime.now().difference(Created).inHours > DurationHours);
  }
