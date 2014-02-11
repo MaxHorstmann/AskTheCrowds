@@ -20,7 +20,7 @@ class ApiController extends BaseController
     if (request.method == "POST")  
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
-        var poll = new Poll.fromJSON(body.body);
+        var poll = _polls.FromJson(body.body);
         poll.Created = new DateTime.now();        
         var user = _users.Single(poll.UserUuid).then((User user) {          
           if (user == null) {            
@@ -72,8 +72,9 @@ class ApiController extends BaseController
   {
     if (request.method == "POST")  
     {
-      HttpBodyHandler.processRequest(request).then((HttpBody body) {        
-        var vote = new Vote.fromJSON(body.body);
+      HttpBodyHandler.processRequest(request).then((HttpBody body) {   
+        //var vote = new Vote.fromJSON(body.body);
+        Vote vote = null;
         
         if (vote.UserUuid!=null)
         {

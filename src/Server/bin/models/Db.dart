@@ -111,9 +111,6 @@ class Db<T extends Serializable>
     });
     
     return newInstance;
-    
-       
-    
   }
   
   Future<bool> Save(T entity) {
