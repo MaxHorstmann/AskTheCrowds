@@ -58,16 +58,16 @@ class User extends Object with Serializable
 
 class Vote extends Object with Serializable
 {
-  String UserGuid;
-  String PollGuid;
+  String UserUuid;
+  String PollUuid;
   int Option;
   
   Vote();
   Vote.fromJSON(json)
   {
     Map voteMap = JSON.decode(json);
-    UserGuid = voteMap["UserGuid"];
-    PollGuid = voteMap["PollGuid"];
+    UserUuid = voteMap["UserUuid"];
+    PollUuid = voteMap["PollUuid"];
     Option = voteMap["Option"];
   }
 
@@ -77,7 +77,7 @@ class Vote extends Object with Serializable
 class ApiResult extends Object with Serializable
 {
   String Payload;
-  String UserGuid;
-  ApiResult(this.Payload, this.UserGuid);  
+  String UserUuid;
+  ApiResult(this.Payload, this.UserUuid);  
 
 }

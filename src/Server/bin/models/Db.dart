@@ -33,11 +33,11 @@ class Db<T extends Serializable>
   Future<List<T>> Where(bool Filter(T x))
   {
     Completer<List<T>> completer = new Completer<List<T>>();
-    AllGuids().then((Set<String> guids) {      
+    AllUuids().then((Set<String> uuids) {      
       var entities = new List<T>();
       var futures = new List<Future<T>>();
-      guids.forEach((String guid) {
-        var future = Single(guid);
+      uuids.forEach((String uuid) {
+        var future = Single(uuid);
         future.then((T entity) {
           if ((entity != null) && (Filter(entity))) {
             entities.add(entity); 
@@ -52,7 +52,7 @@ class Db<T extends Serializable>
     return completer.future;    
   }
   
-  Future<Set<String>> AllGuids()
+  Future<Set<String>> AllUuids()
   { 
     Completer<Set<String>> completer = new Completer<Set<String>>();
     RedisClient.connect(Config.connectionStringRedis)
@@ -62,8 +62,8 @@ class Db<T extends Serializable>
             completer.complete(new Set<String>()); // empty set
             return;
           }
-          redisClient.smembers(GetKey()).then((Set<String> pollGuids) {
-            completer.complete(pollGuids);
+          redisClient.smembers(GetKey()).then((Set<String> pollUuids) {
+            completer.complete(pollUuids);
           });
         });
      });

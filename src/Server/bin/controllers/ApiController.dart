@@ -75,9 +75,9 @@ class ApiController extends BaseController
       HttpBodyHandler.processRequest(request).then((HttpBody body) {        
         var vote = new Vote.fromJSON(body.body);
         
-        if (vote.UserGuid!=null)
+        if (vote.UserUuid!=null)
         {
-          var userKey = "userGuid:" + vote.UserGuid.toString();
+          var userKey = "userGuid:" + vote.UserUuid.toString();
 //          redisClient.exists(userKey).then((bool exists){
 //            if (!exists)
 //            {
@@ -86,7 +86,7 @@ class ApiController extends BaseController
 //          });        
         }
         
-        if (vote.UserGuid==null)
+        if (vote.UserUuid==null)
         {
           var newUser = new User.CreateNew();
           var json = JSON.encode(newUser);
@@ -95,7 +95,7 @@ class ApiController extends BaseController
           //vote.UserGuid = newUser.UserGuid;
         }
                 
-        var pollKey = "pollGuid:" + vote.PollGuid.toString() + ":poll";
+        var pollKey = "pollGuid:" + vote.UserUuid.toString() + ":poll";
         
 //        redisClient.exists(pollKey).then((bool exists){
 //          if (!exists)
