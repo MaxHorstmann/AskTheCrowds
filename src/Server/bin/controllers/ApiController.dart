@@ -45,7 +45,7 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("pollUuid"))
       {
-        _polls.All().then((List<Poll> polls) {
+        _polls.Where((Poll p) => !p.IsClosed).then((List<Poll> polls) {
           sendJson(request, polls);
         });
       }

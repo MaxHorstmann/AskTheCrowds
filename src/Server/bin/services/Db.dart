@@ -27,6 +27,11 @@ class Db<T extends Serializable>
   
   Future<List<T>> All()
   {
+    return Where((_) => true);
+  }
+
+  Future<List<T>> Where(bool Filter(T x))
+  {
     Completer<List<T>> completer = new Completer<List<T>>();
     AllGuids().then((Set<String> guids) {      
       var entities = new List<T>();
@@ -34,7 +39,7 @@ class Db<T extends Serializable>
       guids.forEach((String guid) {
         var future = Single(guid);
         future.then((T entity) {
-          if (entity != null) {
+          if ((entity != null) && (Filter(entity))) {
             entities.add(entity); 
           }
         });

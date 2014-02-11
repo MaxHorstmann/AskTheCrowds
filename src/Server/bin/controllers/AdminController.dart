@@ -38,9 +38,20 @@ class AdminController extends BaseController
   {
     var user = new User.CreateNew();
     _users.Save(user).then((bool success) {
-      request.response.statusCode = 200;
-      request.response.writeln("ok");
-      request.response.close();
+      
+      var poll = new Poll()
+        ..Created = new DateTime.now()
+        ..DurationHours = 1
+        ..UserUuid = user.Uuid
+        ..Question = "Which movie is better?"
+        ..Options = ["Titanic", "Star Wars"];
+      
+      _polls.Save(poll).then((bool success){
+        request.response.statusCode = 200;
+        request.response.writeln("ok");
+        request.response.close();
+      });
+      
     });
     
     
