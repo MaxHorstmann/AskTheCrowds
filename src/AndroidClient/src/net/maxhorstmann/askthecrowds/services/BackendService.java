@@ -2,6 +2,7 @@ package net.maxhorstmann.askthecrowds.services;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import net.maxhorstmann.askthecrowds.models.ApiResult;
@@ -19,17 +20,19 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class BackendService {
 	
 	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
 	private final int httpConnectionTimeout = 5000;
 	
-	private final Gson gson = new Gson();
+	private Gson gson;
 	private LocalStorageService mLocalStorageService;	
 	
 	public BackendService(LocalStorageService localStorageService) {
 		mLocalStorageService=localStorageService;
+		gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create(); // ISO 8601.. sort of
 	}
 	
 	public List<Poll> getPolls() {
@@ -54,7 +57,9 @@ public class BackendService {
 		try 
 		{
      		poll.UserUuid = mLocalStorageService.getUserUuid();
-			HttpPost post = getHttpPost("polls", gson.toJson(poll));
+     		poll.Created = new Date();
+     		String json = gson.toJson(poll);
+			HttpPost post = getHttpPost("polls", json);
 			HttpResponse response = getHttpClient().execute(post);
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){

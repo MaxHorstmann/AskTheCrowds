@@ -1,12 +1,13 @@
 package net.maxhorstmann.askthecrowds.models;
 
+import java.util.Date;
 import java.util.List;
 
 public class Poll {
 	public String Uuid;
 	public String UserUuid;
 	public int CategoryId;
-	public long Created; // ms since unix epoch 
+	public Date Created;  
 	public int DurationHours;
 	public String Language;
 	public String Question;
