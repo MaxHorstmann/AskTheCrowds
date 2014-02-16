@@ -37,6 +37,7 @@ class ApiController extends BaseController
       if (!request.uri.queryParameters.containsKey("uuid"))
       {
         _polls.Where((Poll p) => !p.IsClosed).then((List<Poll> polls) {
+          polls.forEach((Poll p) => p.CountVotes());
           sendJson(request, polls);
         });
       }
@@ -47,6 +48,7 @@ class ApiController extends BaseController
             this.sendPageNotFound(request); 
           }        
           else {
+            poll.CountVotes();
             sendJson(request, poll);
           }
         });

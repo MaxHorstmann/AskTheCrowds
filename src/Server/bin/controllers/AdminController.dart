@@ -37,7 +37,7 @@ class AdminController extends BaseController
   
   bool AddTestData(HttpRequest request)
   {
-    var user = new User.CreateNew();
+    var user = User.CreateNew();
     _users.Save(user).then((bool success) {
       
       var poll = new Poll()

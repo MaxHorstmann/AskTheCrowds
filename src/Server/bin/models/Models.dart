@@ -15,6 +15,13 @@ class Poll extends Object with Serializable
   List<List<String>> Votes;
   List<int> VoteCounts;
   
+  void CountVotes()
+  {
+    if ((Options != null) && (Options.length>0) && (Votes != null)) {
+      VoteCounts = Votes.map((List<String> votes) => votes.length).toList();
+    }
+  }
+  
   bool get IsClosed => (Created!=null) && (new DateTime.now().difference(Created).inHours > DurationHours);
  }
 
