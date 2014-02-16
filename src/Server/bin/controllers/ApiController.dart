@@ -76,8 +76,16 @@ class ApiController extends BaseController
         var vote = (new Json<Vote>()).FromJson(body.body);
         _polls.Single(vote.PollUuid).then((Poll poll) {
           if ((poll != null) && (vote.Option>=0) && (vote.Option<poll.Options.length)) {
-            // TODO store votes in separate set
-            poll.Votes[vote.Option].add(vote.UserUuid);
+            // TODO perf optimization: store votes in separate set
+            if (poll.Votes == null) {
+              poll.Votes = new List<List<String>>();
+              for (var i=0; i<poll.Options.length; i++) {
+                poll.Votes.add(new List<String>());
+              }
+            }
+            if (!poll.Votes[vote.Option].contains(vote.UserUuid)) {
+              poll.Votes[vote.Option].add(vote.UserUuid);
+            }
             _polls.Save(poll);
           }          
         });        

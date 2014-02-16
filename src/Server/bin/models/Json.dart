@@ -25,12 +25,14 @@ class Json<T extends Serializable>
     pollMap.forEach((String K, Object V) {
       Symbol symbol = new Symbol(K);
       VariableMirror vm = cm2.declarations[symbol];
-      TypeMirror tm = vm.type;
-      if (tm.simpleName == const Symbol("DateTime")) {
-        var dt = DateTime.parse(V);
-        instanceMirror.setField(symbol, dt);
-      } else {
-        instanceMirror.setField(symbol, V);
+      if (vm != null) {
+        TypeMirror tm = vm.type;
+        if ((V != null) && (tm.simpleName == const Symbol("DateTime"))) {
+          var dt = DateTime.parse(V);
+          instanceMirror.setField(symbol, dt);
+        } else {
+          instanceMirror.setField(symbol, V);
+        }
       }
     });
     

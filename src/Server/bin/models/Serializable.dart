@@ -20,9 +20,12 @@ abstract class Serializable {
       var val = im.getField(dm.simpleName).reflectee;
       
       // TODO deal with DateTime - then file a bug with Dart team 
-      if (!(val is DateTime)) {
+      if (val is DateTime) {
+        map[key] = val.toString(); // TODO to ISO 8601
+      } else {
         map[key] = val;
       }
+        
     });    
 
     return map;

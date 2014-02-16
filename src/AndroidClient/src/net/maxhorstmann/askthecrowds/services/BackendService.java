@@ -24,7 +24,7 @@ import com.google.gson.GsonBuilder;
 
 public class BackendService {
 	
-	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
+	private final String baseUrl = "http://192.168.1.2/api";
 	private final int httpConnectionTimeout = 5000;
 	
 	private Gson gson;
@@ -64,7 +64,7 @@ public class BackendService {
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
-				mLocalStorageService.putUserUuid(apiResult.UserGuid);				
+				mLocalStorageService.putUserUuid(apiResult.UserUuid);				
 				return apiResult.Payload;
 		    }
 		}
@@ -84,7 +84,7 @@ public class BackendService {
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
-				mLocalStorageService.putUserUuid(apiResult.UserGuid);				
+				mLocalStorageService.putUserUuid(apiResult.UserUuid);				
 				return true;
 		    }
 		}

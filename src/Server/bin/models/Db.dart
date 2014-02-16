@@ -76,23 +76,24 @@ class Db<T extends Serializable>
   
   Future<T> Single(String uuid)
   {
-    Completer<T> completer = new Completer<T>();
-    
-    RedisClient.connect(Config.connectionStringRedis)
-      .then((RedisClient redisClient) {
-        return redisClient.get(uuid).then((String json) {   
-          if (json == null) {
-            completer.complete(null);
-            return;
-          }
-          T fromJson = _json.FromJson(json);
-          fromJson.Uuid = uuid;
-          completer.complete(fromJson);
+    Completer<T> completer = new Completer<T>();    
+    if (uuid == null) {
+      completer.complete(null);
+    } else {
+      RedisClient.connect(Config.connectionStringRedis)
+        .then((RedisClient redisClient) {
+          return redisClient.get(uuid).then((String json) {   
+            if (json == null) {
+              completer.complete(null);
+              return;
+            }
+            T fromJson = _json.FromJson(json);
+            fromJson.Uuid = uuid;
+            completer.complete(fromJson);
+          });
         });
-      });
-    
+    }
     return completer.future;
-    
   }
   
   

@@ -7,7 +7,7 @@ public class LocalStorageService {
 
 	SharedPreferences mPreferences;
 	
-	private final String userUuidSetting = "USER_GUID";
+	private final String userUuidSetting = "USER_UUID";
 	
 	public LocalStorageService(Activity activity){
 		mPreferences = activity.getSharedPreferences("ASK_THE_CROWDS", Activity.MODE_PRIVATE);
