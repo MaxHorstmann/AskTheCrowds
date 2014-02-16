@@ -26,11 +26,12 @@ class User extends Object with Serializable
   
   User();
   
-  User.CreateNew()
+  static User CreateNew()
   {
     var now = new DateTime.now();
-    Created = now;
-    LastRequest = now;
+    return new User()
+      ..Created = now
+      ..LastRequest = now;
   }
 }
 

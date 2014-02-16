@@ -96,6 +96,22 @@ class Db<T extends Serializable>
     return completer.future;
   }
   
+  Future<T> SingleOrNew(String uuid, T createNew())
+  {
+    Completer<T> completer = new Completer<T>();
+    Single(uuid).then((T existingEntity) {
+      if (existingEntity != null) {
+        completer.complete(existingEntity);
+        return;
+      }
+      
+      T newEntity = createNew();
+      Save(newEntity).then((bool success) => completer.complete(success ? newEntity : null));      
+      
+    });
+    return completer.future;
+  }
+  
   
   Future<bool> Save(T entity) {
 

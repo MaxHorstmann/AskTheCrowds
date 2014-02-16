@@ -21,21 +21,12 @@ class ApiController extends BaseController
     {
       HttpBodyHandler.processRequest(request).then((HttpBody body) {   
         var poll = (new Json<Poll>()).FromJson(body.body);
-        poll.Created = new DateTime.now();        
-        var user = _users.Single(poll.UserUuid).then((User user) {          
-          if (user == null) {            
-            var newUser = new User.CreateNew();
-            _users.Save(newUser).then((bool success) {
-              poll.UserUuid = newUser.Uuid;              
-              _polls.Save(poll).then((bool success) {
-                sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
-              });              
-            });
-          } else {
-            _polls.Save(poll).then((bool success) {
-              sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
-            });
-          }          
+        poll.Created = new DateTime.now();
+        _users.SingleOrNew(poll.UserUuid, User.CreateNew).then((User user) {          
+          poll.UserUuid = user.Uuid;              
+          _polls.Save(poll).then((bool success) {
+            sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
+          });              
         });
       });
       return true;                          
