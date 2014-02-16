@@ -42,7 +42,8 @@ public class BackendService {
 			HttpResponse response = getHttpClient().execute(get);
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
-				Poll[] polls = gson.fromJson(EntityUtils.toString(response.getEntity()), Poll[].class);
+		    	String json = EntityUtils.toString(response.getEntity());
+				Poll[] polls = gson.fromJson(json, Poll[].class);
 				return Arrays.asList(polls);
 		    }
 		}

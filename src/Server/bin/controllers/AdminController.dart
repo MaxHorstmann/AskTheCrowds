@@ -2,6 +2,7 @@ library AdminController;
 
 import 'dart:io';
 import 'dart:async';
+import 'dart:convert';
 import "BaseController.dart";
 import "../models/Models.dart";
 import "../models/Db.dart";
@@ -25,7 +26,7 @@ class AdminController extends BaseController
       
       polls.then((List<Poll> polls) {
         request.response.write("\n\n\npolls\n------\n");
-        polls.forEach((Poll p) => request.response.write(p.Uuid + "   " + p.Question + "\n"));          
+        polls.forEach((Poll p) => request.response.write(JSON.encode(p) +"\n"));         
         request.response.close();
       });
       

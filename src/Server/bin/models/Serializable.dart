@@ -1,6 +1,7 @@
 library Serializable;
 
 import 'dart:mirrors';
+import '../common/Util.dart';
 
 // http://stackoverflow.com/questions/20024298/add-json-serializer-to-every-model-class
 
@@ -21,7 +22,7 @@ abstract class Serializable {
       
       // TODO deal with DateTime - then file a bug with Dart team 
       if (val is DateTime) {
-        map[key] = val.toString(); // TODO to ISO 8601
+        map[key] = Util.DateTimeToIso8601(val);
       } else {
         map[key] = val;
       }

@@ -108,6 +108,10 @@ public class VoteScreen extends Activity {
 	
 	private void displayPoll() {
 		
+		if ((mPolls == null) || (mPolls.size() == 0)) {
+			return;
+		}
+		
 		Poll poll = mPolls.get(mPollIndex);
 		
 		mTextViewQuestion.setText(poll.Question);
