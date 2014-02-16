@@ -81,6 +81,7 @@ class ApiController extends BaseController
               if (!poll.Votes[vote.Option].contains(vote.UserUuid)) {
                 poll.Votes[vote.Option].add(vote.UserUuid);
               }
+              poll.CountVotes();
               _polls.Save(poll);
               sendJson(request, new ApiResult("voted", vote.UserUuid));
             });
