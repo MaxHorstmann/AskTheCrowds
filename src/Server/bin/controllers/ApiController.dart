@@ -71,21 +71,32 @@ class ApiController extends BaseController
   {
     if (request.method == "POST")  
     {
-      HttpBodyHandler.processRequest(request).then((HttpBody body) {  
-        var vote = (new Json<Vote>()).FromJson(body.body);
-        _polls.Single(vote.PollUuid).then((Poll poll) {
-          if ((poll != null) && (vote.Option>=0) && (vote.Option<poll.Options.length)) {            
-            _users.SingleOrNew(poll.UserUuid, User.CreateNew).then((User user) {
+      Vote vote = null;
+      Poll poll = null;
+      HttpBodyHandler.processRequest(request)
+        .then((HttpBody body) {  
+            vote = (new Json<Vote>()).FromJson(body.body);
+            return _polls.Single(vote.PollUuid); 
+          })
+        .then((Poll pollFound) {
+            poll = pollFound;
+            if ((poll == null) || (!poll.IsValidVote(vote))) {
+              sendPageNotFound(request);
+            } else {
+              return _users.SingleOrNew(poll.UserUuid, User.CreateNew);
+            }
+          })
+        .then((User user) {
+          if (user != null) {
               vote.UserUuid = user.Uuid;
-              _polls.AddToSet(poll, "votes", vote.Option, vote.UserUuid)
-                .then((int count) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
-            });
-          } else {
-            this.sendPageNotFound(request); 
-          }
-        });        
-
-      });
+              if (vote.Option == Vote.FLAG) {
+                return _polls.AddToSet(poll, "flags", 0, vote.UserUuid);
+              } else {
+                return _polls.AddToSet(poll, "votes", vote.Option, vote.UserUuid);
+              }
+            }
+          })
+        .then((int count) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
       return true;                          
     }
     

@@ -14,6 +14,12 @@ class Poll extends Object with Serializable
   List<int> Votes;
   
   bool get IsClosed => (Created!=null) && (new DateTime.now().difference(Created).inHours > DurationHours);
+  
+  bool IsValidVote(Vote vote)
+  {
+    return ((vote != null) 
+        && ((vote.Option == Vote.FLAG) || ((Options != null) && (vote.Option>=0) && (vote.Option < Options.length))));
+  }
  }
 
 class User extends Object with Serializable
@@ -38,6 +44,8 @@ class Vote extends Object with Serializable
   String UserUuid;
   String PollUuid;
   int Option;
+  
+  static const int FLAG = -1;
 }
 
 class ApiResult extends Object with Serializable

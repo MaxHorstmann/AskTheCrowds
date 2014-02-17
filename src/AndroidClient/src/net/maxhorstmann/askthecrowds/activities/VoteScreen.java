@@ -139,6 +139,9 @@ public class VoteScreen extends Activity {
 				nextPoll();												
 			}
 		});
+		
+		mButtonFlag = (Button)findViewById(R.id.buttonFlag);
+		mButtonFlag.setOnClickListener(new OnVoteButtonClickListener(poll, Vote.FLAG));
 			
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
