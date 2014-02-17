@@ -18,7 +18,7 @@ class Poll extends Object with Serializable
   bool IsValidVote(Vote vote)
   {
     return ((vote != null) 
-        && ((vote.Option == Vote.FLAG) || ((Options != null) && (vote.Option>=0) && (vote.Option < Options.length))));
+        && ((vote.Option == Flag.FLAG_VOTE) || ((Options != null) && (vote.Option>=0) && (vote.Option < Options.length))));
   }
  }
 
@@ -44,8 +44,15 @@ class Vote extends Object with Serializable
   String UserUuid;
   String PollUuid;
   int Option;
-  
-  static const int FLAG = -1;
+}
+
+class Flag extends Object with Serializable
+{
+  DateTime Created;
+  String UserUuid;
+  String PollUuid;
+
+  static const int FLAG_VOTE = -1;
 }
 
 class ApiResult extends Object with Serializable

@@ -16,9 +16,12 @@ abstract class Serializable {
     InstanceMirror im = reflect(this);
     ClassMirror cm = im.type;
     var decls = cm.declarations.values.where((dm) => dm is VariableMirror);
-    decls.forEach((dm) {
-      var key = MirrorSystem.getName(dm.simpleName);
-      var val = im.getField(dm.simpleName).reflectee;
+    decls.forEach((VariableMirror vm) {
+      if (vm.isStatic) 
+        return;
+      
+      var key = MirrorSystem.getName(vm.simpleName);
+      var val = im.getField(vm.simpleName).reflectee;
       
       // TODO deal with DateTime - then file a bug with Dart team 
       if (val is DateTime) {

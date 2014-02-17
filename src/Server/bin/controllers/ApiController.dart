@@ -14,6 +14,8 @@ class ApiController extends BaseController
   
   Db _polls  = new Db<Poll>();
   Db _users  = new Db<User>();
+  Db _flags = new Db<Flag>();
+  
   
   bool Polls(HttpRequest request)
   {
@@ -89,14 +91,18 @@ class ApiController extends BaseController
         .then((User user) {
           if (user != null) {
               vote.UserUuid = user.Uuid;
-              if (vote.Option == Vote.FLAG) {
-                return _polls.AddToSet(poll, "flags", 0, vote.UserUuid);
+              if (vote.Option == Flag.FLAG_VOTE) {
+                Flag flag = new Flag()
+                  ..Created = new DateTime.now()
+                  ..UserUuid = vote.UserUuid
+                  ..PollUuid = vote.PollUuid;
+                return _flags.Save(flag);
               } else {
                 return _polls.AddToSet(poll, "votes", vote.Option, vote.UserUuid);
               }
             }
           })
-        .then((int count) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
+        .then((_) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
       return true;                          
     }
     
