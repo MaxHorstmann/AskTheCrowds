@@ -84,6 +84,7 @@ class ApiController extends BaseController
             poll = pollFound;
             if ((poll == null) || (!poll.IsValidVote(vote))) {
               sendPageNotFound(request);
+              throw "Invalid vote or poll not found";
             } else {
               return _users.SingleOrNew(poll.UserUuid, User.CreateNew);
             }
@@ -102,7 +103,8 @@ class ApiController extends BaseController
               }
             }
           })
-        .then((_) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
+        .then((_) => sendJson(request, new ApiResult("voted", vote.UserUuid)))
+        .catchError((e) => print(e));
       return true;                          
     }
     
