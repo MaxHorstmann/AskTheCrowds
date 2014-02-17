@@ -42,7 +42,7 @@ class ApiController extends BaseController
         _polls.Where((Poll p) => !p.IsClosed)
           .then((List<Poll> pollsFound) => polls = pollsFound )
           .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
-                                               .then((List<int> voteCounts) => poll.VoteCounts = voteCounts)))
+                                               .then((List<int> voteCounts) => poll.Votes = voteCounts)))
           .then((_) => sendJson(request, polls));
       }
       else {
@@ -53,7 +53,7 @@ class ApiController extends BaseController
           }        
           else {
             _polls.GetSetCounts(poll, "votes", poll.Options.length).then((List<int> voteCounts) {
-              poll.VoteCounts = voteCounts;
+              poll.Votes = voteCounts;
               sendJson(request, poll);
             });
           }
