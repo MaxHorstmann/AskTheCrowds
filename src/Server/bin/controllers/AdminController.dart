@@ -59,6 +59,10 @@ class AdminController extends BaseController
     return true;
   }
   
+  bool Throw(HttpRequest request) {
+    throw new Exception("This is a test!");
+  }
+  
   
 
   
