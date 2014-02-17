@@ -19,16 +19,18 @@ class ApiController extends BaseController
   {
     if (request.method == "POST")  
     {
-      HttpBodyHandler.processRequest(request).then((HttpBody body) {   
-        var poll = (new Json<Poll>()).FromJson(body.body);
-        poll.Created = new DateTime.now();
-        _users.SingleOrNew(poll.UserUuid, User.CreateNew).then((User user) {          
-          poll.UserUuid = user.Uuid;              
-          _polls.Save(poll).then((bool success) {
-            sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid));
-          });              
-        });
-      });
+      Poll poll = null;
+      HttpBodyHandler.processRequest(request)
+        .then((HttpBody body) {   
+          poll = (new Json<Poll>()).FromJson(body.body);
+          poll.Created = new DateTime.now();
+          return _users.SingleOrNew(poll.UserUuid, User.CreateNew); 
+          })
+       .then((User user) {          
+            poll.UserUuid = user.Uuid;              
+            return _polls.Save(poll); 
+          })
+       .then((bool success) => sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid)));
       return true;                          
     }
     
@@ -36,10 +38,12 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("uuid"))
       {
-        _polls.Where((Poll p) => !p.IsClosed).then((List<Poll> polls) {
-          polls.forEach((Poll p) => p.CountVotes());
-          sendJson(request, polls);
-        });
+        List<Poll> polls;
+        _polls.Where((Poll p) => !p.IsClosed)
+          .then((List<Poll> pollsFound) => polls = pollsFound )
+          .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
+                                               .then((List<int> voteCounts) => poll.VoteCounts = voteCounts)))
+          .then((_) => sendJson(request, polls));
       }
       else {
         var pollUuid = request.uri.queryParameters["uuid"];
@@ -48,8 +52,10 @@ class ApiController extends BaseController
             this.sendPageNotFound(request); 
           }        
           else {
-            poll.CountVotes();
-            sendJson(request, poll);
+            _polls.GetSetCounts(poll, "votes", poll.Options.length).then((List<int> voteCounts) {
+              poll.VoteCounts = voteCounts;
+              sendJson(request, poll);
+            });
           }
         });
       }
@@ -69,21 +75,10 @@ class ApiController extends BaseController
         var vote = (new Json<Vote>()).FromJson(body.body);
         _polls.Single(vote.PollUuid).then((Poll poll) {
           if ((poll != null) && (vote.Option>=0) && (vote.Option<poll.Options.length)) {            
-            _users.SingleOrNew(poll.UserUuid, User.CreateNew).then((User user) { 
+            _users.SingleOrNew(poll.UserUuid, User.CreateNew).then((User user) {
               vote.UserUuid = user.Uuid;
-              // TODO perf optimization: store votes in separate set
-              if (poll.Votes == null) {
-                poll.Votes = new List<List<String>>();
-                for (var i=0; i<poll.Options.length; i++) {
-                  poll.Votes.add(new List<String>());
-                }
-              }
-              if (!poll.Votes[vote.Option].contains(vote.UserUuid)) {
-                poll.Votes[vote.Option].add(vote.UserUuid);
-              }
-              poll.CountVotes();
-              _polls.Save(poll);
-              sendJson(request, new ApiResult("voted", vote.UserUuid));
+              _polls.AddToSet(poll, "votes", vote.Option, vote.UserUuid)
+                .then((int count) => sendJson(request, new ApiResult("voted", vote.UserUuid)));
             });
           } else {
             this.sendPageNotFound(request); 

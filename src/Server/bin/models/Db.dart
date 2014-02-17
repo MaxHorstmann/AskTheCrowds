@@ -136,9 +136,43 @@ class Db<T extends Serializable>
     return completer.future;    
   }
   
+  Future<List<int>> GetSetCounts(T entity, String setName, int numberOfSets)
+  {
+    Completer<List<int>> completer = new Completer<List<int>>();
+    
+    if (numberOfSets<=0) {
+      completer.complete(null);
+    } else {      
+      List<int> setCounts = new List<int>(numberOfSets);
+      var futures = new List<Future<T>>();
+      for (int i=0;i<numberOfSets;i++) {
+        var future = RedisClient.connect(Config.connectionStringRedis)
+            .then((RedisClient redisClient) => redisClient.scard(GetSetKey(entity, setName, i)))
+            .then((int cnt) => setCounts[i] = cnt);
+        futures.add(future);
+      }
+      Future.wait(futures).then((_) {
+        completer.complete(setCounts);        
+      });
+      
+    }
+    return completer.future;    
+  }
+  
+  Future<int> AddToSet(T entity, String setName, int setIndex, String value)
+  {
+    return RedisClient.connect(Config.connectionStringRedis)
+        .then((RedisClient redisClient) => redisClient.sadd(GetSetKey(entity, setName, setIndex), value));
+  }
+  
   String GetKey()
   {
     return "idx:" + _entityName;
+  }
+  
+  String GetSetKey(T entity, String setName, int setIndex)
+  {
+    return entity.Uuid + ":" + setName + ":" + setIndex.toString();
   }
   
  
