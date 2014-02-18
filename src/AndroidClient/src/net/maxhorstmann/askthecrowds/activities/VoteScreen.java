@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class VoteScreen extends Activity {
@@ -79,6 +80,8 @@ public class VoteScreen extends Activity {
 	List<TextView> mTextViewsOptions;
 	TextView mTextViewQuestion;
 	
+	Spinner mSpinnerCategory;
+	
 	ProgressBar mProgressBar;
 	PostVoteTask mPostVoteTask;
 	
@@ -142,6 +145,9 @@ public class VoteScreen extends Activity {
 		
 		mButtonFlag = (Button)findViewById(R.id.buttonFlag);
 		mButtonFlag.setOnClickListener(new OnVoteButtonClickListener(poll, Vote.FLAG));
+		
+		mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
+		mSpinnerCategory.setVisibility(View.INVISIBLE);
 			
 		mProgressBar.setVisibility(View.INVISIBLE);
 		

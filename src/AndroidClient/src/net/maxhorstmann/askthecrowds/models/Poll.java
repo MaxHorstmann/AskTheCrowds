@@ -12,6 +12,6 @@ public class Poll {
 	public String Language;
 	public String Question;
 	public List<String> Options;
-	public List<Integer> Votes;
+	public List<Integer> Votes;	
 }
 

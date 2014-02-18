@@ -24,7 +24,7 @@ import com.google.gson.GsonBuilder;
 
 public class BackendService {
 	
-	private final String baseUrl = "http://192.168.1.2/api";
+	private final String baseUrl = "http://ny-mhorstmannlp/api";
 	private final int httpConnectionTimeout = 5000;
 	
 	private Gson gson;

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 
 public class CreatePoll extends Activity {
 
@@ -52,6 +53,8 @@ public class CreatePoll extends Activity {
 	ProgressBar mProgressBar;
 	PostPollTask mPostPollTask;
 	
+	Spinner mSpinnerCategory;
+	
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;			
 
@@ -73,6 +76,9 @@ public class CreatePoll extends Activity {
 		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
+		mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
+
+		
 		mButtonPublish = (Button)findViewById(R.id.buttonPublish);
 		mButtonPublish.setOnClickListener(new View.OnClickListener() {
 			
@@ -85,6 +91,8 @@ public class CreatePoll extends Activity {
 				Poll poll = new Poll();
 				
 				poll.DurationHours = 1; 
+				
+				poll.CategoryId = mSpinnerCategory.getSelectedItemPosition();
 				
 				poll.Question = mEditTextQuestion.getText().toString();
 				poll.Options = new ArrayList<String>();
