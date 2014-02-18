@@ -38,7 +38,7 @@ class AdminController extends BaseController
   bool AddTestData(HttpRequest request)
   {
     var user = User.CreateNew();
-    _users.Save(user).then((bool success) {
+    _users.Save(user).then((_) {
       
       var poll = new Poll()
         ..Created = new DateTime.now()
@@ -47,7 +47,7 @@ class AdminController extends BaseController
         ..Question = "Which movie is better?"
         ..Options = ["Titanic", "Star Wars"];
       
-      _polls.Save(poll).then((bool success){
+      _polls.Save(poll).then((_){
         request.response.statusCode = 200;
         request.response.writeln("ok");
         request.response.close();

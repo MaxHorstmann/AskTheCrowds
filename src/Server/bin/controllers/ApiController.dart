@@ -32,7 +32,7 @@ class ApiController extends BaseController
             poll.UserUuid = user.Uuid;              
             return _polls.Save(poll); 
           })
-       .then((bool success) => sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid)));
+       .then((_) => sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid)));
       return true;                          
     }
     

@@ -24,6 +24,9 @@ abstract class Serializable {
       var val = im.getField(vm.simpleName).reflectee;
       
       // TODO deal with DateTime - then file a bug with Dart team 
+      if (val == null) {
+        val = ""; // workaround - Redis client's hmset doesn't handle null values  
+      }
       if (val is DateTime) {
         map[key] = Util.DateTimeToIso8601(val);
       } else {
