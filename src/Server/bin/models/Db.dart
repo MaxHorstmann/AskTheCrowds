@@ -104,7 +104,7 @@ class Db<T extends Serializable>
       }
       
       T newEntity = createNew();
-      Save(newEntity).then((bool success) => completer.complete(success ? newEntity : null));      
+      Save(newEntity).then((_) => completer.complete(newEntity)); // TODO handle save failure      
       
     });
     return completer.future;
