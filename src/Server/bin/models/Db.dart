@@ -85,7 +85,7 @@ class Db<T extends Serializable>
               completer.complete(null);
               return;
             }
-            T fromJson = _json.FromJson(json);
+            T fromJson = _json.FromMap(map);
             fromJson.Uuid = uuid;
             completer.complete(fromJson);
           });
