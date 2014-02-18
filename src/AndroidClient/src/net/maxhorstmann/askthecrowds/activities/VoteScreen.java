@@ -80,7 +80,7 @@ public class VoteScreen extends Activity {
 	List<TextView> mTextViewsOptions;
 	TextView mTextViewQuestion;
 	
-	Spinner mSpinnerCategory;
+	//Spinner mSpinnerCategory;
 	
 	ProgressBar mProgressBar;
 	PostVoteTask mPostVoteTask;
@@ -146,8 +146,8 @@ public class VoteScreen extends Activity {
 		mButtonFlag = (Button)findViewById(R.id.buttonFlag);
 		mButtonFlag.setOnClickListener(new OnVoteButtonClickListener(poll, Vote.FLAG));
 		
-		mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
-		mSpinnerCategory.setVisibility(View.INVISIBLE);
+		//mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
+		//mSpinnerCategory.setVisibility(View.INVISIBLE);
 			
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
