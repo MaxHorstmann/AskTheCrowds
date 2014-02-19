@@ -9,7 +9,7 @@ public class Poll {
 	public int CategoryId;
 	public Date Created;  
 	public int DurationHours;
-	public String Language;
+	public String LanguageCode;
 	public String Question;
 	public List<String> Options;
 	public List<Integer> Votes;	

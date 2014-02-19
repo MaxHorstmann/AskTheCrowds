@@ -8,7 +8,7 @@ class Poll extends Object with Serializable
   int CategoryId;
   DateTime Created; 
   int DurationHours;
-  String Language;
+  String LanguageCode;
   String Question;
   List<String> Options;
   List<int> Votes;

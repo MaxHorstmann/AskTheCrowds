@@ -54,6 +54,7 @@ public class CreatePoll extends Activity {
 	PostPollTask mPostPollTask;
 	
 	Spinner mSpinnerCategory;
+	Spinner mSpinnerLanguage;
 	
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;			
@@ -77,7 +78,7 @@ public class CreatePoll extends Activity {
 		mProgressBar.setVisibility(View.INVISIBLE);
 		
 		mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
-
+		mSpinnerLanguage = (Spinner)findViewById(R.id.spinnerLanguage);
 		
 		mButtonPublish = (Button)findViewById(R.id.buttonPublish);
 		mButtonPublish.setOnClickListener(new View.OnClickListener() {
@@ -93,6 +94,9 @@ public class CreatePoll extends Activity {
 				poll.DurationHours = 1; 
 				
 				poll.CategoryId = mSpinnerCategory.getSelectedItemPosition();
+				poll.LanguageCode = getResources()
+						.getStringArray(R.array.languageCodes)
+						[mSpinnerLanguage.getSelectedItemPosition()];
 				
 				poll.Question = mEditTextQuestion.getText().toString();
 				poll.Options = new ArrayList<String>();

@@ -20,5 +20,19 @@
         <item>Relationships</item>
         <item>Entertainment</item>
 	</string-array>
+	
+    <string-array name="languages">
+        <item>English</item>
+        <item>German</item>
+        <item>French</item>
+        <item>Spanish</item>        
+	</string-array>
+	
+    <string-array name="languageCodes">
+        <item>en</item>
+        <item>de</item>
+        <item>fr</item>
+        <item>es</item>
+	</string-array>
     
 </resources>
