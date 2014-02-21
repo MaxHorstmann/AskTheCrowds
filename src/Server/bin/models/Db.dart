@@ -80,7 +80,7 @@ class Db<T extends Serializable>
     } else {
       RedisClient.connect(Config.connectionStringRedis)
         .then((RedisClient redisClient) {
-          return redisClient.hgetall(id).then((Map map) {   
+          return redisClient.hgetall(GetEntityKey(id)).then((Map map) {   
             if (map == null) {
               completer.complete(null);
               return;
@@ -112,19 +112,25 @@ class Db<T extends Serializable>
   
   
   Future Save(T entity) {
-    if (entity.Id == null) {
-      entity.Id = _uuid.v4(); // or from sequence...
-    }
 
-    var map = entity.toJson();
     RedisClient redisClient = null;
     
     return RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient newRedisClient) {
           redisClient = newRedisClient;
+          
+          if (entity.Id == null) {
+            return redisClient.incr(GetEntitySequenceKey());
+          }
+          Completer<int> completer = new Completer<int>();
+          completer.complete(int.parse(entity.Id));
+          return completer.future;
+      })
+      .then((int id) {
+          entity.Id = id.toString();
           return redisClient.sadd(GetIndexKey(), entity.Id); 
         })
-      .then((int elementsAdded) => redisClient.hmset(entity.Id, map));
+      .then((_) => redisClient.hmset(GetEntityKey(entity.Id), entity.toJson()));
   }
   
   Future<List<int>> GetSetCounts(T entity, String setName, int numberOfSets)
@@ -154,6 +160,23 @@ class Db<T extends Serializable>
   {
     return RedisClient.connect(Config.connectionStringRedis)
         .then((RedisClient redisClient) => redisClient.sadd(GetSetKey(entity, setName, setIndex), value));
+  }
+  
+  Future<int> GetSequenceValue()
+  {
+    return RedisClient.connect(Config.connectionStringRedis)
+        .then((RedisClient redisClient) => redisClient.get(GetEntitySequenceKey()))
+        .then((String sequenceKey) => new Future.value(int.parse(sequenceKey)));
+  }
+  
+  String GetEntityKey(String id)
+  {
+    return _entityName + ":" + id;
+  }
+  
+  String GetEntitySequenceKey()
+  {
+    return "seq:" + _entityName;
   }
   
   String GetIndexKey()

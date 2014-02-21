@@ -26,7 +26,7 @@ class User extends Object with Serializable
 {
   DateTime Created;
   DateTime LastRequest;
-  String LastIP;
+  //String LastIP;
   
   User();
   
