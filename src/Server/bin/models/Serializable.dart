@@ -7,11 +7,11 @@ import '../common/Util.dart';
 
 abstract class Serializable {
 
-  String Uuid;
+  String Id;
   
   Map toJson() { 
     Map map = new Map();
-    map["Uuid"] = Uuid;
+    map["Id"] = Id;
     
     InstanceMirror im = reflect(this);
     ClassMirror cm = im.type;

@@ -26,19 +26,19 @@ class ApiController extends BaseController
         .then((HttpBody body) {   
           poll = (new Json<Poll>()).FromJson(body.body);
           poll.Created = new DateTime.now();
-          return _users.SingleOrNew(poll.UserUuid, User.CreateNew); 
+          return _users.SingleOrNew(poll.UserId, User.CreateNew); 
           })
        .then((User user) {          
-            poll.UserUuid = user.Uuid;              
+            poll.UserId = user.Id;              
             return _polls.Save(poll); 
           })
-       .then((_) => sendJson(request, new ApiResult(poll.Uuid, poll.UserUuid)));
+       .then((_) => sendJson(request, new ApiResult(poll.Id, poll.UserId)));
       return true;                          
     }
     
     if (request.method == "GET")  
     { 
-      if (!request.uri.queryParameters.containsKey("uuid"))
+      if (!request.uri.queryParameters.containsKey("id"))
       {
         List<Poll> polls;
         _polls.Where((Poll p) => !p.IsClosed)
@@ -48,8 +48,8 @@ class ApiController extends BaseController
           .then((_) => sendJson(request, polls));
       }
       else {
-        var pollUuid = request.uri.queryParameters["uuid"];
-        _polls.Single(pollUuid).then((Poll poll) {
+        var pollId = request.uri.queryParameters["id"];
+        _polls.Single(pollId).then((Poll poll) {
           if (poll == null) { 
             this.sendPageNotFound(request); 
           }        
@@ -78,7 +78,7 @@ class ApiController extends BaseController
       HttpBodyHandler.processRequest(request)
         .then((HttpBody body) {  
             vote = (new Json<Vote>()).FromJson(body.body);
-            return _polls.Single(vote.PollUuid); 
+            return _polls.Single(vote.PollId); 
           })
         .then((Poll pollFound) {
             poll = pollFound;
@@ -86,24 +86,24 @@ class ApiController extends BaseController
               sendPageNotFound(request);
               throw "Invalid vote or poll not found";
             } else {
-              return _users.SingleOrNew(poll.UserUuid, User.CreateNew);
+              return _users.SingleOrNew(poll.UserId, User.CreateNew);
             }
           })
         .then((User user) {
           if (user != null) {
-              vote.UserUuid = user.Uuid;
+              vote.UserId = user.Id;
               if (vote.Option == Flag.FLAG_VOTE) {
                 Flag flag = new Flag()
                   ..Created = new DateTime.now()
-                  ..UserUuid = vote.UserUuid
-                  ..PollUuid = vote.PollUuid;
+                  ..UserId = vote.UserId
+                  ..PollId = vote.PollId;
                 return _flags.Save(flag);
               } else {
-                return _polls.AddToSet(poll, "votes", vote.Option, vote.UserUuid);
+                return _polls.AddToSet(poll, "votes", vote.Option, vote.UserId);
               }
             }
           })
-        .then((_) => sendJson(request, new ApiResult("voted", vote.UserUuid)))
+        .then((_) => sendJson(request, new ApiResult("voted", vote.UserId)))
         .catchError((e) => print(e));
       return true;                          
     }

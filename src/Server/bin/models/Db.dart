@@ -35,11 +35,11 @@ class Db<T extends Serializable>
   Future<List<T>> Where(bool Filter(T x))
   {
     Completer<List<T>> completer = new Completer<List<T>>();
-    AllUuids().then((Set<String> uuids) {      
+    AllIds().then((Set<String> ids) {      
       var entities = new List<T>();
       var futures = new List<Future<T>>();
-      uuids.forEach((String uuid) {
-        var future = Single(uuid);
+      ids.forEach((String id) {
+        var future = Single(id);
         future.then((T entity) {
           if ((entity != null) && (Filter(entity))) {
             entities.add(entity); 
@@ -54,7 +54,7 @@ class Db<T extends Serializable>
     return completer.future;    
   }
   
-  Future<Set<String>> AllUuids()
+  Future<Set<String>> AllIds()
   { 
     Completer<Set<String>> completer = new Completer<Set<String>>();
     RedisClient.connect(Config.connectionStringRedis)
@@ -64,29 +64,29 @@ class Db<T extends Serializable>
             completer.complete(new Set<String>()); // empty set
             return;
           }
-          redisClient.smembers(GetIndexKey()).then((Set<String> pollUuids) {
-            completer.complete(pollUuids);
+          redisClient.smembers(GetIndexKey()).then((Set<String> pollIds) {
+            completer.complete(pollIds);
           });
         });
      });
     return completer.future;
   }
   
-  Future<T> Single(String uuid)
+  Future<T> Single(String id)
   {
     Completer<T> completer = new Completer<T>();    
-    if (uuid == null) {
+    if (id == null) {
       completer.complete(null);
     } else {
       RedisClient.connect(Config.connectionStringRedis)
         .then((RedisClient redisClient) {
-          return redisClient.hgetall(uuid).then((Map map) {   
+          return redisClient.hgetall(id).then((Map map) {   
             if (map == null) {
               completer.complete(null);
               return;
             }
             T fromJson = _json.FromMap(map);
-            fromJson.Uuid = uuid;
+            fromJson.Id = id;
             completer.complete(fromJson);
           });
         });
@@ -94,10 +94,10 @@ class Db<T extends Serializable>
     return completer.future;
   }
   
-  Future<T> SingleOrNew(String uuid, T createNew())
+  Future<T> SingleOrNew(String id, T createNew())
   {
     Completer<T> completer = new Completer<T>();
-    Single(uuid).then((T existingEntity) {
+    Single(id).then((T existingEntity) {
       if (existingEntity != null) {
         completer.complete(existingEntity);
         return;
@@ -112,8 +112,8 @@ class Db<T extends Serializable>
   
   
   Future Save(T entity) {
-    if (entity.Uuid == null) {
-      entity.Uuid = _uuid.v4();
+    if (entity.Id == null) {
+      entity.Id = _uuid.v4(); // or from sequence...
     }
 
     var map = entity.toJson();
@@ -122,9 +122,9 @@ class Db<T extends Serializable>
     return RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient newRedisClient) {
           redisClient = newRedisClient;
-          return redisClient.sadd(GetIndexKey(), entity.Uuid); 
+          return redisClient.sadd(GetIndexKey(), entity.Id); 
         })
-      .then((int elementsAdded) => redisClient.hmset(entity.Uuid, map));
+      .then((int elementsAdded) => redisClient.hmset(entity.Id, map));
   }
   
   Future<List<int>> GetSetCounts(T entity, String setName, int numberOfSets)
@@ -163,7 +163,7 @@ class Db<T extends Serializable>
   
   String GetSetKey(T entity, String setName, int setIndex)
   {
-    return entity.Uuid + ":" + setName + ":" + setIndex.toString();
+    return entity.Id + ":" + setName + ":" + setIndex.toString();
   }
   
  

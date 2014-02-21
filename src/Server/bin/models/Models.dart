@@ -4,7 +4,7 @@ import 'Serializable.dart';
 
 class Poll extends Object with Serializable
 {
-  String UserUuid;
+  String UserId;
   int CategoryId;
   DateTime Created; 
   int DurationHours;
@@ -41,16 +41,16 @@ class User extends Object with Serializable
 
 class Vote extends Object with Serializable
 {
-  String UserUuid;
-  String PollUuid;
+  String UserId;
+  String PollId;
   int Option;
 }
 
 class Flag extends Object with Serializable
 {
   DateTime Created;
-  String UserUuid;
-  String PollUuid;
+  String UserId;
+  String PollId;
 
   static const int FLAG_VOTE = -1;
 }
@@ -58,6 +58,6 @@ class Flag extends Object with Serializable
 class ApiResult extends Object with Serializable
 {
   String Payload;
-  String UserUuid;
-  ApiResult(this.Payload, this.UserUuid);  
+  String UserId;
+  ApiResult(this.Payload, this.UserId);  
 }
