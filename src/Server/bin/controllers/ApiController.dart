@@ -7,7 +7,7 @@ import "BaseController.dart";
 import "../models/Models.dart";
 import "../models/Db.dart";
 import "../models/Json.dart";
-
+import "../common/Util.dart";
 
 class ApiController extends BaseController
 {
@@ -40,12 +40,23 @@ class ApiController extends BaseController
     { 
       if (!request.uri.queryParameters.containsKey("id"))
       {
-        List<Poll> polls;
-        _polls.Where((Poll p) => !p.IsClosed)
-          .then((List<Poll> pollsFound) => polls = pollsFound )
-          .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
-                                               .then((List<int> voteCounts) => poll.Votes = voteCounts)))
-          .then((_) => sendJson(request, polls));
+        var numberOfPolls = request.uri.queryParameters.containsKey("take") ?
+            int.parse(request.uri.queryParameters["take"]) : 20;
+        
+        var maxPollIdFuture = request.uri.queryParameters.containsKey("maxPollId") ?
+            new Future<int>.value(int.parse(request.uri.queryParameters["maxPollId"])) : 
+              _polls.GetSequenceValue();
+
+        maxPollIdFuture.then((int maxPollId) {
+          var polls = new List<Poll>();
+          Future
+            .forEach(Util.Range(maxPollId, maxPollId - numberOfPolls), 
+              (int id) => _polls.Single(id.toString()).then((Poll poll) => poll != null ? polls.add(poll) : null))
+            .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
+            .then((List<int> voteCounts) => poll.Votes = voteCounts)))
+            .then((_) => sendJson(request, polls));
+        });
+        
       }
       else {
         var pollId = request.uri.queryParameters["id"];

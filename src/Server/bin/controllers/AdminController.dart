@@ -44,6 +44,8 @@ class AdminController extends BaseController
         ..Created = new DateTime.now()
         ..DurationHours = 1
         ..UserId = user.Id
+        ..CategoryId = 1
+        ..LanguageCode = "en"
         ..Question = "Which movie is better?"
         ..Options = ["Titanic", "Star Wars"];
       

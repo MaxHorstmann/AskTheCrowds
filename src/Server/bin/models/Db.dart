@@ -80,14 +80,21 @@ class Db<T extends Serializable>
     } else {
       RedisClient.connect(Config.connectionStringRedis)
         .then((RedisClient redisClient) {
-          return redisClient.hgetall(GetEntityKey(id)).then((Map map) {   
-            if (map == null) {
+          redisClient.exists(GetEntityKey(id))
+          .then((bool exists){
+            if (!exists) {
               completer.complete(null);
-              return;
             }
-            T fromJson = _json.FromMap(map);
-            fromJson.Id = id;
-            completer.complete(fromJson);
+            else
+            return redisClient.hgetall(GetEntityKey(id)).then((Map map) {   
+              if (map == null) {
+                completer.complete(null);
+                return;
+              }
+              T fromJson = _json.FromMap(map);
+              fromJson.Id = id;
+              completer.complete(fromJson);
+            });
           });
         });
     }
@@ -160,7 +167,7 @@ class Db<T extends Serializable>
   {
     return RedisClient.connect(Config.connectionStringRedis)
         .then((RedisClient redisClient) => redisClient.get(GetEntitySequenceKey()))
-        .then((String sequenceKey) => new Future.value(int.parse(sequenceKey)));
+        .then((String sequenceKey) => new Future.value(sequenceKey == null ? 0 : int.parse(sequenceKey)));
   }
   
   String GetEntityKey(String id)
