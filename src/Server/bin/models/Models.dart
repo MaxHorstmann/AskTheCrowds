@@ -17,7 +17,7 @@ class Poll extends Object with Serializable
   
   bool IsValidVote(Vote vote)
   {
-    return ((vote != null) 
+    return ((!IsClosed) && (vote != null) 
         && ((vote.Option == Flag.FLAG_VOTE) || ((Options != null) && (vote.Option>=0) && (vote.Option < Options.length))));
   }
  }
