@@ -1,6 +1,7 @@
 library models;
 
 import 'Serializable.dart';
+import 'dart:io';
 
 class Poll extends Object with Serializable
 {
@@ -26,7 +27,7 @@ class User extends Object with Serializable
 {
   DateTime Created;
   DateTime LastRequest;
-  //String LastIP;
+  String LastIP;
   
   User();
   
@@ -37,6 +38,13 @@ class User extends Object with Serializable
       ..Created = now
       ..LastRequest = now;
   }
+  
+  void UpdateLastRequest(HttpRequest request)
+  {
+    LastRequest = new DateTime.now();
+    LastIP = request.connectionInfo.remoteAddress.address;
+  }
+  
 }
 
 class Vote extends Object with Serializable

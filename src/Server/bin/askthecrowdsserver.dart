@@ -29,7 +29,8 @@ void main() {
       {
         var now = new DateTime.now();
         var path = request.uri.path;
-        print("$now: $path");
+        var ip = request.connectionInfo.remoteAddress.host;
+        print("$now|$ip|$path");
         
         var routeFound = false;
         routeTable.keys.forEach((String pattern) 

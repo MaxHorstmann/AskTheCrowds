@@ -28,10 +28,12 @@ class ApiController extends BaseController
           poll.Created = new DateTime.now();
           return _users.SingleOrNew(poll.UserId, User.CreateNew); 
           })
-       .then((User user) {          
-            poll.UserId = user.Id;              
-            return _polls.Save(poll); 
-          })
+       .then((User user) {
+            poll.UserId = user.Id;   
+            user.UpdateLastRequest(request);
+            return _users.Save(user);
+       })
+       .then((_) => _polls.Save(poll))
        .then((_) => sendJson(request, new ApiResult(poll.Id, poll.UserId)));
       return true;                          
     }
@@ -101,17 +103,19 @@ class ApiController extends BaseController
             }
           })
         .then((User user) {
-          if (user != null) {
-              vote.UserId = user.Id;
-              if (vote.Option == Flag.FLAG_VOTE) {
-                Flag flag = new Flag()
-                  ..Created = new DateTime.now()
-                  ..UserId = vote.UserId
-                  ..PollId = vote.PollId;
-                return _flags.Save(flag);
-              } else {
-                return _polls.AddToSet(poll, "votes", vote.Option, vote.UserId);
-              }
+            vote.UserId = user.Id;
+            user.UpdateLastRequest(request);
+            return _users.Save(user);
+        })
+        .then((_) {            
+            if (vote.Option == Flag.FLAG_VOTE) {
+              Flag flag = new Flag()
+                ..Created = new DateTime.now()
+                ..UserId = vote.UserId
+                ..PollId = vote.PollId;
+              return _flags.Save(flag);
+            } else {
+              return _polls.AddToSet(poll, "votes", vote.Option, vote.UserId);
             }
           })
         .then((_) => sendJson(request, new ApiResult("voted", vote.UserId)))
