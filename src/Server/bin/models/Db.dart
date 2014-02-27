@@ -56,20 +56,15 @@ class Db<T extends Serializable>
   
   Future<Set<String>> AllIds()
   { 
-    Completer<Set<String>> completer = new Completer<Set<String>>();
-    RedisClient.connect(Config.connectionStringRedis)
-      .then((RedisClient redisClient) { 
-        redisClient.exists(GetIndexKey()).then((bool exists) {
-          if (!exists) {
-            completer.complete(new Set<String>()); // empty set
-            return;
-          }
-          redisClient.smembers(GetIndexKey()).then((Set<Object> pollIds) {
-            completer.complete(pollIds.map((oId) => oId.toString()).toSet());
-          });
-        });
-     });
-    return completer.future;
+    RedisClient redisClient = null;
+    return RedisClient.connect(Config.connectionStringRedis)
+      .then((RedisClient redisClientFound) {
+        redisClient = redisClientFound;
+        return redisClient.exists(GetIndexKey()); 
+        })
+      .then((bool exists) => exists ?
+            redisClient.smembers(GetIndexKey()).then((Set<Object> pollIds) => pollIds.map((oId) => oId.toString()).toSet()) :
+            new Future<Set<String>>.value(new Set<String>()));
   }
   
   Future<T> Single(String id)
