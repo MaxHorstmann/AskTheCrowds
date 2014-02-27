@@ -64,8 +64,8 @@ class Db<T extends Serializable>
             completer.complete(new Set<String>()); // empty set
             return;
           }
-          redisClient.smembers(GetIndexKey()).then((Set<String> pollIds) {
-            completer.complete(pollIds);
+          redisClient.smembers(GetIndexKey()).then((Set<Object> pollIds) {
+            completer.complete(pollIds.map((oId) => oId.toString()).toSet());
           });
         });
      });
