@@ -116,12 +116,8 @@ class Db<T extends Serializable>
   Future Save(T entity) {
     RedisClient redisClient = null;    
     return RedisClient.connect(Config.connectionStringRedis)
-      .then((RedisClient newRedisClient) {
-          redisClient = newRedisClient;
-          return entity.Id == null ?
-              redisClient.incr(GetEntitySequenceKey()) :
-              new Future<int>.value(int.parse(entity.Id));
-      })
+      .then((RedisClient rc) => redisClient = rc)
+      .then((_) => entity.Id == null ? redisClient.incr(GetEntitySequenceKey()) : new Future<int>.value(int.parse(entity.Id)))
       .then((int id) {
           entity.Id = id.toString();
           return redisClient.sadd(GetIndexKey(), entity.Id); 
