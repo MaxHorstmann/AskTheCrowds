@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 public class VoteScreen extends Activity {
@@ -67,7 +66,7 @@ public class VoteScreen extends Activity {
 		public void onClick(View v) {
 			VoteScreen.this.mProgressBar.setVisibility(View.VISIBLE);
 			Vote vote = new Vote();
-			vote.PollUuid = mPoll.Uuid;
+			vote.PollId = mPoll.Id;
 			vote.Option = mOption;
 			PostVoteTask postVoteTask = new PostVoteTask();
 			postVoteTask.execute(vote);					

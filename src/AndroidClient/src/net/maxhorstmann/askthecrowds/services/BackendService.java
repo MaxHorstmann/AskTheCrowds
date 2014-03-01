@@ -58,7 +58,7 @@ public class BackendService {
 	public String postPoll(Poll poll) {
 		try 
 		{
-     		poll.UserUuid = mLocalStorageService.getUserUuid();
+     		poll.UserId = mLocalStorageService.getUserUuid();
      		poll.Created = new Date();
      		String json = gson.toJson(poll);
 			HttpPost post = getHttpPost("polls", json);
@@ -66,7 +66,7 @@ public class BackendService {
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
-				mLocalStorageService.putUserUuid(apiResult.UserUuid);				
+				mLocalStorageService.putUserUuid(apiResult.UserId);				
 				return apiResult.Payload;
 		    }
 		}
@@ -80,13 +80,13 @@ public class BackendService {
 	public boolean postVote(Vote vote) {
 		try 
 		{
-			vote.UserUuid = mLocalStorageService.getUserUuid();
+			vote.UserId = mLocalStorageService.getUserUuid();
 			HttpPost post = getHttpPost("votes", gson.toJson(vote));
 			HttpResponse response = getHttpClient().execute(post);
 			int responseStatusCode = response.getStatusLine().getStatusCode();
 		    if (responseStatusCode == HttpStatus.SC_OK){
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
-				mLocalStorageService.putUserUuid(apiResult.UserUuid);				
+				mLocalStorageService.putUserUuid(apiResult.UserId);				
 				return true;
 		    }
 		}

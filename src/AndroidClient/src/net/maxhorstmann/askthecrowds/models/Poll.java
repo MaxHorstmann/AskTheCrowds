@@ -1,11 +1,13 @@
 package net.maxhorstmann.askthecrowds.models;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class Poll {
-	public String Uuid;
-	public String UserUuid;
+	public String Id;
+	public String UserId;
 	public int CategoryId;
 	public Date Created;  
 	public int DurationHours;
@@ -13,5 +15,31 @@ public class Poll {
 	public String Question;
 	public List<String> Options;
 	public List<Integer> Votes;	
+	
+	public Date GetEndTime()
+	{
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		c.setTime(Created); 
+		c.add(Calendar.HOUR, DurationHours);
+		return c.getTime();
+	}
+	
+	public long GetRemainingMinutes()
+	{
+		// TODO needs work
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		Date now = c.getTime();
+		Date endTime = GetEndTime();
+		if (now.after(endTime)) {
+			return 0;
+		}
+		long diff = endTime.getTime() - now.getTime();
+		return diff / (1000 * 60);		
+	}
+	
+    public boolean IsClosed() {
+    	return GetRemainingMinutes() > 0;
+
+    }
 }
 
