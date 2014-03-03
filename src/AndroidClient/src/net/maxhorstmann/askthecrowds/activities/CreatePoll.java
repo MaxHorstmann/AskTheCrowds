@@ -36,6 +36,7 @@ public class CreatePoll extends Activity {
 			}
 			else
 			{
+				mLocalStorageService.addMyPollId(result);
 				mAlertDialogSuccess.show();
 			}
 		}
