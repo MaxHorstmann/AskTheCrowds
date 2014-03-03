@@ -1,5 +1,6 @@
 package net.maxhorstmann.askthecrowds.activities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.maxhorstmann.askthecrowds.R;
@@ -27,7 +28,16 @@ public class StartScreen extends Activity {
 		@Override 
 		protected void onPostExecute(List<Poll> polls) {
 			if (polls != null) {
-				mPolls = polls;
+				mActivePolls = new ArrayList<Poll>();
+				mClosedPolls = new ArrayList<Poll>();
+				for (Poll p : polls)
+				{
+					if (p.IsClosed()) {
+						mClosedPolls.add(p);
+					} else {
+						mActivePolls.add(p);
+					}
+				}				
 				UpdatePollViews();
 			}
 		}
@@ -42,7 +52,8 @@ public class StartScreen extends Activity {
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;
 
-	List<Poll> mPolls = null;
+	List<Poll> mActivePolls = null;
+	List<Poll> mClosedPolls = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +98,7 @@ public class StartScreen extends Activity {
 	private void UpdatePollViews()
 	{
 		mLinearLayoutPolls.removeAllViews();
-		for (Poll poll : mPolls)
+		for (Poll poll : mActivePolls)
 		{
 			TextView childTextView = new TextView(mLinearLayoutPolls.getContext());
 			String text = String.format("(%s minutes) %s", poll.GetRemainingMinutes(), poll.Question);
