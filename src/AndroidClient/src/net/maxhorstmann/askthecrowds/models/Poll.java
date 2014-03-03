@@ -18,8 +18,8 @@ public class Poll {
 	
 	public Date GetEndTime()
 	{
-		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-		c.setTime(Created); 
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+		c.setTime(Created);
 		c.add(Calendar.HOUR, DurationHours);
 		return c.getTime();
 	}
@@ -27,7 +27,7 @@ public class Poll {
 	public long GetRemainingMinutes()
 	{
 		// TODO needs work
-		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		Date now = c.getTime();
 		Date endTime = GetEndTime();
 		if (now.after(endTime)) {

@@ -26,7 +26,7 @@ public class StartScreen extends Activity {
 		
 		@Override 
 		protected void onPostExecute(List<Poll> polls) {
-			if ((polls != null) && (polls.size() > 0)) {
+			if (polls != null) {
 				mPolls = polls;
 				UpdatePollViews();
 			}
