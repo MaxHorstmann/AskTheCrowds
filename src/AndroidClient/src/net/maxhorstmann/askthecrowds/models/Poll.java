@@ -38,7 +38,7 @@ public class Poll {
 	}
 	
     public boolean IsClosed() {
-    	return GetRemainingMinutes() > 0;
+    	return GetRemainingMinutes() <= 0;
 
     }
 }

@@ -13,8 +13,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 public class StartScreen extends Activity {
 	
@@ -45,9 +45,10 @@ public class StartScreen extends Activity {
 	
 	
 	Button mButtonCreatePoll;
-	Button mButtonVoteScreen;
 	Button mButtonRefresh;
-	LinearLayout mLinearLayoutPolls;
+	
+	ViewFlipper mViewFlipperActivePolls;
+	ViewFlipper mViewFlipperResults;
 	
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;
@@ -64,7 +65,9 @@ public class StartScreen extends Activity {
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
 
-		mLinearLayoutPolls = (LinearLayout)findViewById(R.id.linearLayoutPolls);		
+		mViewFlipperActivePolls = (ViewFlipper)findViewById(R.id.viewFlipperActivePolls);
+		mViewFlipperResults = (ViewFlipper)findViewById(R.id.viewFlipperResults);
+
 		
 		mButtonCreatePoll = (Button)findViewById(R.id.buttonCreatePoll);
 		mButtonCreatePoll.setOnClickListener(new View.OnClickListener() {			
@@ -75,8 +78,7 @@ public class StartScreen extends Activity {
 			}
 		});
 		
-		mButtonVoteScreen = (Button)findViewById(R.id.buttonVote);
-		mButtonVoteScreen.setOnClickListener(new View.OnClickListener() {
+		mViewFlipperActivePolls.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -93,18 +95,35 @@ public class StartScreen extends Activity {
 			}
 		});
 		
+		
+		
 	}
 	
 	private void UpdatePollViews()
 	{
-		mLinearLayoutPolls.removeAllViews();
+		mViewFlipperActivePolls.stopFlipping();
+		mViewFlipperActivePolls.removeAllViews();
 		for (Poll poll : mActivePolls)
 		{
-			TextView childTextView = new TextView(mLinearLayoutPolls.getContext());
-			String text = String.format("(%s minutes) %s", poll.GetRemainingMinutes(), poll.Question);
+			TextView childTextView = new TextView(mViewFlipperActivePolls.getContext());
+			String text = String.format("%s (%s minutes) %s", poll.Id, poll.GetRemainingMinutes(), poll.Question);
 			childTextView.setText(text);
-			mLinearLayoutPolls.addView(childTextView);
+			mViewFlipperActivePolls.addView(childTextView);
 		}
+		mViewFlipperActivePolls.setFlipInterval(1000);
+		mViewFlipperActivePolls.startFlipping();
+		
+		mViewFlipperResults.stopFlipping();
+		mViewFlipperResults.removeAllViews();
+		for (Poll poll : mClosedPolls)
+		{
+			TextView childTextView = new TextView(mViewFlipperResults.getContext());
+			String text = String.format("%s (closed) %s", poll.Id, poll.Question);
+			childTextView.setText(text);
+			mViewFlipperResults.addView(childTextView);
+		}
+		mViewFlipperResults.setFlipInterval(1200);
+		mViewFlipperResults.startFlipping();
 	}
 	
 	@Override

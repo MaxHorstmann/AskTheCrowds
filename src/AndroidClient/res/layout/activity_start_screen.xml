@@ -4,27 +4,38 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewActivePollsHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Welcome!"
+        android:text="Active Polls"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/buttonVote"
+    
+    <ViewFlipper
+        android:id="@+id/viewFlipperActivePolls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.51" >
+    </ViewFlipper>
+    
+        <TextView
+        android:id="@+id/textViewResultsHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Vote" />
-
-    <Button
-        android:id="@+id/buttonViewResults"
-        android:layout_width="wrap_content"
+        android:text="Poll Results"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+     <ViewFlipper
+        android:id="@+id/viewFlipperResults"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="View Results" />
+        android:layout_weight="0.51" >
+    </ViewFlipper>
+    
+
 
     <Button
         android:id="@+id/buttonCreatePoll"
@@ -33,19 +44,14 @@
         android:layout_gravity="center"
         android:text="Create Poll" />
 
-    <LinearLayout
-        android:id="@+id/linearLayoutPolls"
-        android:layout_width="match_parent"
+
+
+    <Button
+        android:id="@+id/buttonRefresh"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:text="Refresh" />
 
-    </LinearLayout>
 
-     <Button
-     android:id="@+id/buttonRefresh"
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content"
-     android:text="Refresh" />
-    
-    
+
 </LinearLayout>
