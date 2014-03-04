@@ -41,13 +41,13 @@ class AdminController extends BaseController
     _users.Save(user).then((_) {
       
       var poll = new Poll()
-        ..Created = new DateTime.now()
+        ..Created = new DateTime.utc(2013, 12, 1, 1, 1, 1, 1)
         ..DurationHours = 1
         ..UserId = user.Id
         ..CategoryId = 1
         ..LanguageCode = "en"
-        ..Question = "Which movie is better?"
-        ..Options = ["Titanic", "Star Wars"];
+        ..Question = "Is this a really old question?"
+        ..Options = ["Yes", "Nope"];
       
       _polls.Save(poll).then((_){
         request.response.statusCode = 200;
