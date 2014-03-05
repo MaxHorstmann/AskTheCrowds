@@ -107,11 +107,14 @@ public class StartScreen extends Activity {
 		Context context = mViewFlipperActivePolls.getContext();
 		for (Poll poll : mActivePolls)
 		{
-			TextView childTextView = new TextView(context);
-			childTextView.setTextAppearance(context, android.R.style.TextAppearance_Large);
-			String text = String.format("%s (%s minutes) %s", poll.Id, poll.GetRemainingMinutes(), poll.Question);
-			childTextView.setText(text);
-			mViewFlipperActivePolls.addView(childTextView);
+			TextView tvQuestion = new TextView(context);
+			tvQuestion.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+			tvQuestion.setText(poll.Question);
+			mViewFlipperActivePolls.addView(tvQuestion);
+			for (String option : poll.Options)
+			{
+				
+			}
 		}
 		mViewFlipperActivePolls.setFlipInterval(1000);
 		mViewFlipperActivePolls.startFlipping();
