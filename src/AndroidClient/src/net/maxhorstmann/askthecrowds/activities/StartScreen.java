@@ -8,6 +8,7 @@ import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
 import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -103,9 +104,11 @@ public class StartScreen extends Activity {
 	{
 		mViewFlipperActivePolls.stopFlipping();
 		mViewFlipperActivePolls.removeAllViews();
+		Context context = mViewFlipperActivePolls.getContext();
 		for (Poll poll : mActivePolls)
 		{
-			TextView childTextView = new TextView(mViewFlipperActivePolls.getContext());
+			TextView childTextView = new TextView(context);
+			childTextView.setTextAppearance(context, android.R.style.TextAppearance_Large);
 			String text = String.format("%s (%s minutes) %s", poll.Id, poll.GetRemainingMinutes(), poll.Question);
 			childTextView.setText(text);
 			mViewFlipperActivePolls.addView(childTextView);

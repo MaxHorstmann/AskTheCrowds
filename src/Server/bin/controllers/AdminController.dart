@@ -41,7 +41,7 @@ class AdminController extends BaseController
     _users.Save(user).then((_) {
       
       var poll = new Poll()
-        ..Created = new DateTime.utc(2013, 12, 1, 1, 1, 1, 1)
+        ..Created = new DateTime.now()
         ..DurationHours = 1
         ..UserId = user.Id
         ..CategoryId = 1
