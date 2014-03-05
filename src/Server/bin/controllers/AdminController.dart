@@ -42,12 +42,12 @@ class AdminController extends BaseController
       
       var poll = new Poll()
         ..Created = new DateTime.now()
-        ..DurationHours = 1
+        ..DurationHours = 5
         ..UserId = user.Id
         ..CategoryId = 1
         ..LanguageCode = "en"
-        ..Question = "Is this a really old question?"
-        ..Options = ["Yes", "Nope"];
+        ..Question = "Which Island is better?"
+        ..Options = ["Maui", "Mallorca", "Sylt", "Manhattan"];
       
       _polls.Save(poll).then((_){
         request.response.statusCode = 200;

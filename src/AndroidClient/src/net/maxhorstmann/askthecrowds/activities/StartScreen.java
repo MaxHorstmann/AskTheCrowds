@@ -14,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
@@ -107,14 +108,25 @@ public class StartScreen extends Activity {
 		Context context = mViewFlipperActivePolls.getContext();
 		for (Poll poll : mActivePolls)
 		{
-			TextView tvQuestion = new TextView(context);
-			tvQuestion.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+			LinearLayout ll = new LinearLayout(context);
+			ll.setOrientation(LinearLayout.VERTICAL);
+			
+			TextView tvQuestion = new TextView(ll.getContext());
+			tvQuestion.setTextAppearance(context, android.R.style.TextAppearance_Large);
+			
 			tvQuestion.setText(poll.Question);
-			mViewFlipperActivePolls.addView(tvQuestion);
+			ll.addView(tvQuestion);
+			
 			for (String option : poll.Options)
 			{
-				
+				TextView tvOption = new TextView(ll.getContext());
+				tvOption.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+				String optionText = String.format("[] %s", option);
+				tvOption.setText(optionText);
+				ll.addView(tvOption);
 			}
+			
+			mViewFlipperActivePolls.addView(ll);
 		}
 		mViewFlipperActivePolls.setFlipInterval(1000);
 		mViewFlipperActivePolls.startFlipping();
