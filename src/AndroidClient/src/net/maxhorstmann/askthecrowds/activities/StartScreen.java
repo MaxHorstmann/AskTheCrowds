@@ -10,6 +10,7 @@ import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -110,6 +111,7 @@ public class StartScreen extends Activity {
 		{
 			LinearLayout ll = new LinearLayout(context);
 			ll.setOrientation(LinearLayout.VERTICAL);
+			ll.setBackgroundColor(Color.CYAN);
 			
 			TextView tvQuestion = new TextView(ll.getContext());
 			tvQuestion.setTextAppearance(context, android.R.style.TextAppearance_Large);
