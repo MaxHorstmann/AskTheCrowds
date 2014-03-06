@@ -111,7 +111,7 @@ public class StartScreen extends Activity {
 		{
 			LinearLayout ll = new LinearLayout(context);
 			ll.setOrientation(LinearLayout.VERTICAL);
-			ll.setBackgroundColor(Color.CYAN);
+			ll.setBackgroundColor(Color.YELLOW);
 			
 			TextView tvQuestion = new TextView(ll.getContext());
 			tvQuestion.setTextAppearance(context, android.R.style.TextAppearance_Large);

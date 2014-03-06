@@ -15,8 +15,10 @@
     
     <ViewFlipper
         android:id="@+id/viewFlipperActivePolls"
+        
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
         android:layout_weight="0.51" >
     </ViewFlipper>
     
