@@ -9,6 +9,7 @@ public class Poll {
 	public String Id;
 	public String UserId;
 	public int CategoryId;
+	public int TypeId;
 	public Date Created;  
 	public int DurationHours;
 	public String LanguageCode;

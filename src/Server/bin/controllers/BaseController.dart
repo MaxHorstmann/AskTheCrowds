@@ -28,6 +28,15 @@ abstract class BaseController
   }  
   
   
+  void sendServerError(HttpRequest request, [Exception e])
+  {
+    if (e != null) {
+      print(e.toString());
+    }
+    request.response.statusCode = 500;
+    request.response.close();
+  }
+  
   void sendPageNotFound(HttpRequest request)
   {
     sendContent(request, "404 not found", 404);

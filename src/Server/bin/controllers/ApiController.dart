@@ -26,6 +26,7 @@ class ApiController extends BaseController
         .then((HttpBody body) {   
           poll = (new Json<Poll>()).FromJson(body.body);
           poll.Created = new DateTime.now();
+          poll.Validate();
           return _users.SingleOrNew(poll.UserId, User.CreateNew); 
           })
        .then((User user) {
@@ -34,7 +35,8 @@ class ApiController extends BaseController
             return _users.Save(user);
        })
        .then((_) => _polls.Save(poll))
-       .then((_) => sendJson(request, new ApiResult(poll.Id, poll.UserId)));
+       .then((_) => sendJson(request, new ApiResult(poll.Id, poll.UserId)))
+       .catchError((e) => sendServerError(request, e));
       return true;                          
     }
     
@@ -56,7 +58,8 @@ class ApiController extends BaseController
               (int id) => _polls.Single(id.toString()).then((Poll poll) => poll != null ? polls.add(poll) : null))
             .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
             .then((List<int> voteCounts) => poll.Votes = voteCounts)))
-            .then((_) => sendJson(request, polls));
+            .then((_) => sendJson(request, polls))
+            .catchError((_) => sendJson(request, new ApiResult.Error()));
         });
         
       }
