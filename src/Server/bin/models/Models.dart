@@ -18,6 +18,9 @@ class Poll extends Object with Serializable
   static const int TYPE_MULTIPLE_CHOICE = 1;
   static const int TYPE_NUMBER = 2;
   
+  static const int MAX_DURATION_HOURS = 24 * 30;
+  static const int MAX_NUMBER_OF_OPTIONS = 8;
+  
   bool get IsClosed => (Created!=null) && (new DateTime.now().difference(Created).inHours > DurationHours);
 
   int get NumberPollMin => int.parse(Options[0]);
@@ -25,9 +28,35 @@ class Poll extends Object with Serializable
   
   void Validate()
   {
-    if ((TypeId != TYPE_MULTIPLE_CHOICE) && (TypeId != TYPE_NUMBER)) {
+    if ((DurationHours==null) || (DurationHours<=0) || (DurationHours>MAX_DURATION_HOURS))
+      throw new Exception("Invalid poll: DurationHours $DurationHours not valid.");
+
+    if ((TypeId==null) || ((TypeId != TYPE_MULTIPLE_CHOICE) && (TypeId != TYPE_NUMBER))) {
       throw new Exception("Invalid poll: TypeId $TypeId not valid.");
     }
+    
+    if ((Question == null) || (Question.length == 0))
+      throw new Exception("Invalid question: $Question");
+    
+    if ((TypeId == TYPE_MULTIPLE_CHOICE) 
+      && ((Options==null) || ((Options.length<2) || (Options.length>MAX_NUMBER_OF_OPTIONS))))
+        throw new Exception("Invalid options for multiple choice poll.");
+    
+    if (TypeId == TYPE_NUMBER) {
+      if ((Options==null) || ((Options.length!=2)))
+          throw new Exception("Invalid options for number poll. Need to be exactly two (min, max).");
+
+      try {
+        NumberPollMin;
+        NumberPollMax;
+      }
+      catch (FormatException) {
+        throw new Exception("Invalid options for number poll. Need to be numeric.");
+      }
+    }
+    
+      
+    
   }
   
   bool IsValidVote(Vote vote)
@@ -83,11 +112,7 @@ class Flag extends Object with Serializable
 
 class ApiResult extends Object with Serializable
 {
-  bool ErrorOccured;
   String Payload;
   String UserId;
   ApiResult(this.Payload, this.UserId);
-  ApiResult.Error() {
-    ErrorOccured = true;
-  }
 }

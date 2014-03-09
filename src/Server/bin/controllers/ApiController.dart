@@ -36,8 +36,8 @@ class ApiController extends BaseController
        })
        .then((_) => _polls.Save(poll))
        .then((_) => sendJson(request, new ApiResult(poll.Id, poll.UserId)))
-       .catchError((e) => sendServerError(request, e));
-      return true;                          
+       .catchError((Exception e) => sendServerError(request, e));
+      return true;              
     }
     
     if (request.method == "GET")  
