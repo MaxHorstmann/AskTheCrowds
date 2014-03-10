@@ -59,7 +59,7 @@ class ApiController extends BaseController
             .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
             .then((List<int> voteCounts) => poll.Votes = voteCounts)))
             .then((_) => sendJson(request, polls))
-            .catchError((_) => sendJson(request, new ApiResult.Error()));
+            .catchError((Exception e) => sendServerError(request, e));
         });
         
       }
@@ -99,11 +99,9 @@ class ApiController extends BaseController
         .then((Poll pollFound) {
             poll = pollFound;
             if ((poll == null) || (!poll.IsValidVote(vote))) {
-              sendPageNotFound(request);
-              throw "Invalid vote or poll not found";
-            } else {
-              return _users.SingleOrNew(poll.UserId, User.CreateNew);
-            }
+              throw new Exception("Invalid vote or poll not found");
+            } 
+            return _users.SingleOrNew(poll.UserId, User.CreateNew);            
           })
         .then((User user) {
             vote.UserId = user.Id;
@@ -111,7 +109,7 @@ class ApiController extends BaseController
             return _users.Save(user);
         })
         .then((_) {            
-            if (vote.Option == Flag.FLAG_VOTE) {
+            if ((vote.IsFlag!=null) && (vote.IsFlag)) {
               Flag flag = new Flag()
                 ..Created = new DateTime.now()
                 ..UserId = vote.UserId
@@ -122,7 +120,7 @@ class ApiController extends BaseController
             }
           })
         .then((_) => sendJson(request, new ApiResult("voted", vote.UserId)))
-        .catchError((e) => print(e));
+        .catchError((Exception e) => sendServerError(request, e));
       return true;                          
     }
     

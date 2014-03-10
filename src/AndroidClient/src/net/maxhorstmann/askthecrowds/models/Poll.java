@@ -14,6 +14,7 @@ public class Poll {
 	public int DurationHours;
 	public String LanguageCode;
 	public String Question;
+	public String ImageUrl;
 	public List<String> Options;
 	public List<Integer> Votes;	
 	

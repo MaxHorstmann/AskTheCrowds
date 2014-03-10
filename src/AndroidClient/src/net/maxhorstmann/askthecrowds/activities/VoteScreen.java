@@ -56,10 +56,12 @@ public class VoteScreen extends Activity {
 	{
 		int mOption;
 		Poll mPoll;
-		public OnVoteButtonClickListener(Poll poll, int option)
+		boolean mIsFlag;
+		public OnVoteButtonClickListener(Poll poll, int option, boolean isFlag)
 		{
 			mOption = option;		
 			mPoll = poll;
+			mIsFlag = isFlag;			
 		}
 		
 		@Override
@@ -68,6 +70,7 @@ public class VoteScreen extends Activity {
 			Vote vote = new Vote();
 			vote.PollId = mPoll.Id;
 			vote.Option = mOption;
+			vote.IsFlag = mIsFlag;
 			PostVoteTask postVoteTask = new PostVoteTask();
 			postVoteTask.execute(vote);					
 		}	
@@ -130,7 +133,7 @@ public class VoteScreen extends Activity {
 		
 		for (int i=0; i<poll.Options.size(); i++) {
 			mTextViewsOptions.get(i).setText(poll.Options.get(i));
-			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(poll, i));			
+			mButtonsVote.get(i).setOnClickListener(new OnVoteButtonClickListener(poll, i, false));			
 		}
 		
 		mButtonSkip = (Button)findViewById(R.id.buttonSkip);
@@ -143,7 +146,7 @@ public class VoteScreen extends Activity {
 		});
 		
 		mButtonFlag = (Button)findViewById(R.id.buttonFlag);
-		mButtonFlag.setOnClickListener(new OnVoteButtonClickListener(poll, Vote.FLAG));
+		mButtonFlag.setOnClickListener(new OnVoteButtonClickListener(poll, 0, true));
 		
 		//mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
 		//mSpinnerCategory.setVisibility(View.INVISIBLE);

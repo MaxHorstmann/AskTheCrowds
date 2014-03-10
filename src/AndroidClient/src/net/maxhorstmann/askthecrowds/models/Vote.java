@@ -4,7 +4,6 @@ public class Vote {
 	public String UserId;
 	public String PollId;
 	public int Option;
-	
-	public static final int FLAG = -1;
+    public boolean IsFlag;	
 	
 }

@@ -12,6 +12,7 @@ class Poll extends Object with Serializable
   int DurationHours;
   String LanguageCode;
   String Question;
+  String ImageUrl;
   List<String> Options; 
   List<int> Votes;
   
@@ -99,6 +100,7 @@ class Vote extends Object with Serializable
   String UserId;
   String PollId;
   int Option;
+  bool IsFlag;
 }
 
 class Flag extends Object with Serializable
@@ -106,8 +108,6 @@ class Flag extends Object with Serializable
   DateTime Created;
   String UserId;
   String PollId;
-
-  static const int FLAG_VOTE = -999; // TODO different "flag" mechanism
 }
 
 class ApiResult extends Object with Serializable
