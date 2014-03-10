@@ -5,4 +5,5 @@ description: Server back-end for "Ask the Crowds" app
 dependencies:
   http_server: any
   redis_client: '>=0.1.9'
+  unittest: any
   uuid: any
