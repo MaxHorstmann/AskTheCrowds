@@ -14,7 +14,7 @@ class Poll extends Object with Serializable
   String Question;
   String ImageUrl;
   List<String> Options; 
-  Map<int, int> Votes;
+  Map<String, int> Votes;
   
   static const int TYPE_MULTIPLE_CHOICE = 1;
   static const int TYPE_NUMBER = 2;

@@ -57,7 +57,7 @@ class ApiController extends BaseController
             .forEach(Util.Range(maxPollId, maxPollId - numberOfPolls), 
               (int id) => _polls.Single(id.toString()).then((Poll poll) => poll != null ? polls.add(poll) : null))
             .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes")
-            .then((Map<int, int> voteCounts) => poll.Votes = voteCounts)))
+            .then((Map<String, int> voteCounts) => poll.Votes = voteCounts)))
             .then((_) => sendJson(request, polls))
             .catchError((e) => sendServerError(request, e));
         });
@@ -70,7 +70,7 @@ class ApiController extends BaseController
             this.sendPageNotFound(request); 
           }        
           else {
-            _polls.GetSetCounts(poll, "votes").then((Map<int,int> voteCounts) {
+            _polls.GetSetCounts(poll, "votes").then((Map<String,int> voteCounts) {
               poll.Votes = voteCounts;
               sendJson(request, poll);
             });
@@ -101,7 +101,7 @@ class ApiController extends BaseController
             if ((poll == null) || (!poll.IsValidVote(vote))) {
               throw new Exception("Invalid vote or poll not found");
             } 
-            return _users.SingleOrNew(poll.UserId, User.CreateNew);            
+            return _users.SingleOrNew(vote.UserId, User.CreateNew);            
           })
         .then((User user) {
             vote.UserId = user.Id;

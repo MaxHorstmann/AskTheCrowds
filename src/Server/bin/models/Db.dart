@@ -125,23 +125,26 @@ class Db<T extends Serializable>
       .then((_) => redisClient.hmset(GetEntityKey(entity.Id), entity.toJson()));
   }
   
-  Future<Map<int, int>> GetSetCounts(T entity, String setName)
+  Future<Map<String, int>> GetSetCounts(T entity, String setName)
   {
-    Map<int,int> map = new Map<int,int>();
+    Map<String, int> map = new Map<String, int>();
     RedisClient redisClient;
     return RedisClient.connect(Config.connectionStringRedis)
       .then((RedisClient rc) => redisClient = rc)
       .then((_) => redisClient.smembers(GetSetIndexKey(entity, setName)))
       .then((Set<Object> setIndexes) => Future.forEach(setIndexes, 
-          (Object setIndex) => redisClient.scard(GetSetKey(entity, setName, int.parse(setIndex)))
-          .then((int cnt) => map[int.parse(setIndex)] = cnt))
+          (Object setIndex) => redisClient.scard(GetSetKey(entity, setName, setIndex))
+          .then((int cnt) => map[setIndex.toString()] = cnt))
       .then((_) => map));
   }
   
   Future<int> AddToSet(T entity, String setName, int setIndex, String value)
   {
+    RedisClient redisClient;
     return RedisClient.connect(Config.connectionStringRedis)
-        .then((RedisClient redisClient) => redisClient.sadd(GetSetKey(entity, setName, setIndex), value));
+        .then((RedisClient rc) => redisClient = rc)
+        .then((_) => redisClient.sadd(GetSetIndexKey(entity, setName), setIndex))
+        .then((_) => redisClient.sadd(GetSetKey(entity, setName, setIndex), value));
   }
   
   Future<int> GetSequenceValue()
