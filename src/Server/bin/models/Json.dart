@@ -49,6 +49,10 @@ class Json<T extends Serializable>
             if (V.length > 0) {
               instanceMirror.setField(symbol, JSON.decode(V));
             }
+          } else if ((tm.simpleName == const Symbol("Map")) && (V is String)) {
+            if (V.length > 0) {
+              instanceMirror.setField(symbol, JSON.decode(V));
+            }
           } else if ((tm.simpleName == const Symbol("String"))) {
             instanceMirror.setField(symbol, V.toString());
           } 

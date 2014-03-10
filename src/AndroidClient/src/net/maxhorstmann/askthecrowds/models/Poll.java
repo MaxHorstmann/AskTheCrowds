@@ -3,6 +3,7 @@ package net.maxhorstmann.askthecrowds.models;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 public class Poll {
@@ -16,7 +17,7 @@ public class Poll {
 	public String Question;
 	public String ImageUrl;
 	public List<String> Options;
-	public List<Integer> Votes;	
+	public Map<Integer, Integer> Votes;	
 	
 	public Date GetEndTime()
 	{

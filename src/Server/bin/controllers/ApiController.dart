@@ -56,10 +56,10 @@ class ApiController extends BaseController
           Future
             .forEach(Util.Range(maxPollId, maxPollId - numberOfPolls), 
               (int id) => _polls.Single(id.toString()).then((Poll poll) => poll != null ? polls.add(poll) : null))
-            .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes", poll.Options.length)
-            .then((List<int> voteCounts) => poll.Votes = voteCounts)))
+            .then((_) => Future.forEach(polls, (Poll poll) => _polls.GetSetCounts(poll, "votes")
+            .then((Map<int, int> voteCounts) => poll.Votes = voteCounts)))
             .then((_) => sendJson(request, polls))
-            .catchError((Exception e) => sendServerError(request, e));
+            .catchError((e) => sendServerError(request, e));
         });
         
       }
@@ -70,7 +70,7 @@ class ApiController extends BaseController
             this.sendPageNotFound(request); 
           }        
           else {
-            _polls.GetSetCounts(poll, "votes", poll.Options.length).then((List<int> voteCounts) {
+            _polls.GetSetCounts(poll, "votes").then((Map<int,int> voteCounts) {
               poll.Votes = voteCounts;
               sendJson(request, poll);
             });

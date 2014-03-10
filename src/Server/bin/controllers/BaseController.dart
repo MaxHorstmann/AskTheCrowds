@@ -28,7 +28,7 @@ abstract class BaseController
   }  
   
   
-  void sendServerError(HttpRequest request, [Exception e])
+  void sendServerError(HttpRequest request, [e])
   {
     if (e != null) {
       print(e.toString());
