@@ -42,8 +42,11 @@ public class CreatePoll extends Activity {
 		}
 	}
 	
-	Button mButtonPublish;
-	EditText mEditTextQuestion;
+	Poll newPoll;
+	int screen = 0;
+	
+//	Button mButtonPublish;
+//	EditText mEditTextQuestion;
 	
 	EditText mEditTextAnswer1;
 	EditText mEditTextAnswer2;
@@ -58,57 +61,67 @@ public class CreatePoll extends Activity {
 	Spinner mSpinnerLanguage;
 	
 	BackendService mBackendService;
-	LocalStorageService mLocalStorageService;			
+	LocalStorageService mLocalStorageService;		
+	
+	
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
+
+		screen = 0;
+		draw();
+
 		
-		createAlertDialogs();
-		setContentView(R.layout.create_poll);
+	}
+	
+	private void draw() {
 		
-		mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
-		mEditTextAnswer1 = (EditText)findViewById(R.id.editTextAnswer1);
-		mEditTextAnswer2 = (EditText)findViewById(R.id.editTextAnswer2);		
-		
-		mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
-		mProgressBar.setVisibility(View.INVISIBLE);
-		
-		mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
-		mSpinnerLanguage = (Spinner)findViewById(R.id.spinnerLanguage);
-		
-		mButtonPublish = (Button)findViewById(R.id.buttonPublish);
-		mButtonPublish.setOnClickListener(new View.OnClickListener() {
+		switch (screen)
+		{
+			case 0: drawQuestionScreen(); break;
+			case 1: drawPhotoScreen(); break;
+			case 2: drawPublishScreen(); break;
 			
+		
+		}
+		
+
+	}
+	
+	private void drawQuestionScreen() {
+		setContentView(R.layout.create_poll_0);
+		
+		Button buttonSubmitQuestion = (Button)findViewById(R.id.buttonSubmitQuestion);
+		buttonSubmitQuestion.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				
-				mButtonPublish.setEnabled(false);
-				mProgressBar.setVisibility(View.VISIBLE);
-				
-				Poll poll = new Poll();
-				
-				poll.DurationHours = 1; 
-				
-				poll.CategoryId = mSpinnerCategory.getSelectedItemPosition();
-				poll.LanguageCode = getResources()
-						.getStringArray(R.array.languageCodes)
-						[mSpinnerLanguage.getSelectedItemPosition()];
-				
-				poll.Question = mEditTextQuestion.getText().toString();
-				poll.Options = new ArrayList<String>();
-				poll.Options.add(mEditTextAnswer1.getText().toString());
-				poll.Options.add(mEditTextAnswer2.getText().toString());
-				
-				mPostPollTask = new PostPollTask();
-				mPostPollTask.execute(poll);
+				screen = 1;
+				draw();
 			}
-		});
+		});		
+	}
+	
+	private void drawPhotoScreen() {
+		setContentView(R.layout.create_poll_1);
 		
+	}
+	
+	private void drawPublishScreen() {
+		
+		createAlertDialogs();
+
+		//mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
+		
+		//mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
+		//mProgressBar.setVisibility(View.INVISIBLE);
+		
+		//mSpinnerCategory = (Spinner)findViewById(R.id.spinnerCategory);
+		//mSpinnerLanguage = (Spinner)findViewById(R.id.spinnerLanguage);
 	}
 
 
