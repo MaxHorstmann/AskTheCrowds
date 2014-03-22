@@ -1,7 +1,5 @@
 package net.maxhorstmann.askthecrowds.activities;
 
-import java.util.ArrayList;
-
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
@@ -11,11 +9,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class CreatePoll extends Activity {
 
@@ -45,8 +47,8 @@ public class CreatePoll extends Activity {
 	Poll newPoll;
 	int screen = 0;
 	
-//	Button mButtonPublish;
-//	EditText mEditTextQuestion;
+	Button mButtonPublish;
+	EditText mEditTextQuestion;
 	
 	EditText mEditTextAnswer1;
 	EditText mEditTextAnswer2;
@@ -96,14 +98,28 @@ public class CreatePoll extends Activity {
 	private void drawQuestionScreen() {
 		setContentView(R.layout.create_poll_0);
 		
-		Button buttonSubmitQuestion = (Button)findViewById(R.id.buttonSubmitQuestion);
-		buttonSubmitQuestion.setOnClickListener(new View.OnClickListener() {			
-			@Override
-			public void onClick(View v) {
-				screen = 1;
-				draw();
-			}
-		});		
+		EditText editTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
+		editTextQuestion.setOnEditorActionListener(new OnEditorActionListener() {
+		    @Override
+		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		        boolean handled = false;
+		        if (actionId == EditorInfo.IME_ACTION_DONE) {
+		            screen=1;
+		            draw();
+		            handled = true;
+		        }
+		        return handled;
+		    }
+		 });
+		
+//		Button buttonSubmitQuestion = (Button)findViewById(R.id.buttonSubmitQuestion);
+//		buttonSubmitQuestion.setOnClickListener(new View.OnClickListener() {			
+//			@Override
+//			public void onClick(View v) {
+//				screen = 1;
+//				draw();
+//			}
+//		});		
 	}
 	
 	private void drawPhotoScreen() {
