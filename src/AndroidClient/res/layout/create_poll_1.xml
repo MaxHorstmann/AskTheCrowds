@@ -40,6 +40,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="click!" />
-    
+
+    <ProgressBar
+        android:id="@+id/progressBarPictureUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

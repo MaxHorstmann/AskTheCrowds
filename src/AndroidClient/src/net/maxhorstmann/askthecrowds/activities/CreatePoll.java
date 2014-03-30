@@ -10,11 +10,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +49,9 @@ public class CreatePoll extends Activity {
 		}
 	}
 	
+	
+	
+	
 	Poll newPoll;
 	int screen = 0;
 	
@@ -74,6 +76,7 @@ public class CreatePoll extends Activity {
 	Camera camera;
 	SurfaceView surfaceView;
 	Button bShutter;
+	ProgressBar progressBarPictureUpload;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +138,9 @@ public class CreatePoll extends Activity {
 		bShutter = (Button)findViewById(R.id.buttonShutter);
 		bShutter.setVisibility(View.INVISIBLE);
 		
+		progressBarPictureUpload = (ProgressBar)findViewById(R.id.progressBarPictureUpload);
+		progressBarPictureUpload.setVisibility(View.INVISIBLE);
+		
 		if (camera == null) {
 			bTakePhoto.setEnabled(false);
 		} else {
@@ -148,7 +154,13 @@ public class CreatePoll extends Activity {
 							
 							@Override
 							public void onClick(View v) {
-								camera.takePicture(null, null, null);
+								camera.takePicture(null, null, new PictureCallback() {
+										@Override
+										public void onPictureTaken(byte[] data, Camera camera) {
+											bShutter.setVisibility(View.INVISIBLE);
+											progressBarPictureUpload.setVisibility(View.VISIBLE);
+								        }								
+									});
 								
 							}
 						});
