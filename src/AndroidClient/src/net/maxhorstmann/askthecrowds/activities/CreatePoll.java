@@ -1,5 +1,7 @@
 package net.maxhorstmann.askthecrowds.activities;
 
+import java.io.IOException;
+
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
@@ -7,9 +9,13 @@ import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -65,8 +71,9 @@ public class CreatePoll extends Activity {
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;		
 	
-	
-
+	Camera camera;
+	SurfaceView surfaceView;
+	Button bShutter;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +83,7 @@ public class CreatePoll extends Activity {
 		mBackendService = new BackendService(mLocalStorageService);
 
 		screen = 0;
-		draw();
-
-		
+		draw();				
 	}
 	
 	private void draw() {
@@ -88,8 +93,6 @@ public class CreatePoll extends Activity {
 			case 0: drawQuestionScreen(); break;
 			case 1: drawPhotoScreen(); break;
 			case 2: drawPublishScreen(); break;
-			
-		
 		}
 		
 
@@ -124,6 +127,48 @@ public class CreatePoll extends Activity {
 	
 	private void drawPhotoScreen() {
 		setContentView(R.layout.create_poll_1);
+		
+		camera = Camera.open();
+		surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+
+		Button bTakePhoto = (Button)findViewById(R.id.buttonTakePhoto);
+		bShutter = (Button)findViewById(R.id.buttonShutter);
+		bShutter.setVisibility(View.INVISIBLE);
+		
+		if (camera == null) {
+			bTakePhoto.setEnabled(false);
+		} else {
+			bTakePhoto.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					try {
+						camera.setPreviewDisplay(surfaceView.getHolder());
+						camera.startPreview();
+						bShutter.setOnClickListener(new View.OnClickListener() {
+							
+							@Override
+							public void onClick(View v) {
+								camera.takePicture(null, null, null);
+								
+							}
+						});
+						bShutter.setVisibility(View.VISIBLE);
+					} catch (IOException e) {
+						e.printStackTrace();
+						camera = null;
+					}
+				}
+			} );
+		}
+		
+		Button bSkip = (Button)findViewById(R.id.buttonSkipPhoto);
+		bSkip.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				screen=2;
+				draw();
+			}
+		} );
 		
 	}
 	
