@@ -8,15 +8,20 @@ import net.maxhorstmann.askthecrowds.services.BackendService;
 import net.maxhorstmann.askthecrowds.services.LocalStorageService;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -52,7 +57,7 @@ public class CreatePoll extends Activity {
 	
 	
 	
-	Poll newPoll;
+	Poll mPoll;
 	int screen = 0;
 	
 	Button mButtonPublish;
@@ -85,6 +90,9 @@ public class CreatePoll extends Activity {
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
 
+		mPoll = new Poll();
+		
+		
 		screen = 0;
 		draw();				
 	}
@@ -104,28 +112,32 @@ public class CreatePoll extends Activity {
 	private void drawQuestionScreen() {
 		setContentView(R.layout.create_poll_0);
 		
-		EditText editTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
-		editTextQuestion.setOnEditorActionListener(new OnEditorActionListener() {
+		mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
+		mEditTextQuestion.setOnEditorActionListener(new OnEditorActionListener() {
 		    @Override
 		    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		        boolean handled = false;
 		        if (actionId == EditorInfo.IME_ACTION_DONE) {
-		            screen=1;
-		            draw();
-		            handled = true;
+		        	mPoll.Question = mEditTextQuestion.getText().toString();
+		        	if (mPoll.Question.length()>0) {
+		        		
+		        		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		        	    imm.hideSoftInputFromWindow(mEditTextQuestion.getWindowToken(), 0);
+		        		
+			            screen=1;
+			            draw();
+			            handled = true;
+		        	}
 		        }
 		        return handled;
 		    }
 		 });
 		
-//		Button buttonSubmitQuestion = (Button)findViewById(R.id.buttonSubmitQuestion);
-//		buttonSubmitQuestion.setOnClickListener(new View.OnClickListener() {			
-//			@Override
-//			public void onClick(View v) {
-//				screen = 1;
-//				draw();
-//			}
-//		});		
+		mEditTextQuestion.requestFocus();
+		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+	    imm.showSoftInput(mEditTextQuestion, 0); // hmmm doesn't work... 
+		
+	
 	}
 	
 	private void drawPhotoScreen() {
@@ -159,6 +171,16 @@ public class CreatePoll extends Activity {
 										public void onPictureTaken(byte[] data, Camera camera) {
 											bShutter.setVisibility(View.INVISIBLE);
 											progressBarPictureUpload.setVisibility(View.VISIBLE);
+											
+										
+											Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+											mPoll.ImageUrl = MediaStore.Images.Media.insertImage(getContentResolver(), bmp,
+													"newImage" , "");  
+											
+											screen = 2;
+											draw();
+											
+											
 								        }								
 									});
 								
@@ -187,6 +209,8 @@ public class CreatePoll extends Activity {
 	private void drawPublishScreen() {
 		
 		createAlertDialogs();
+		
+		
 
 		//mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
 		
