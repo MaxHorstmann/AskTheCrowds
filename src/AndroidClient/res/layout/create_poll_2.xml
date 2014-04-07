@@ -18,7 +18,16 @@
         android:text="Ready to publish?"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    
-   
+    <Button
+        android:id="@+id/buttonPublish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Publish!" />
+
+    <ProgressBar
+        android:id="@+id/progressBarPublish"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

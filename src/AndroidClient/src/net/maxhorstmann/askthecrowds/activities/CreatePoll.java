@@ -41,7 +41,7 @@ public class CreatePoll extends Activity {
 		
 		@Override 
 		protected void onPostExecute(String result) {
-			CreatePoll.this.mProgressBar.setVisibility(View.INVISIBLE);
+			CreatePoll.this.mProgressBarPublish.setVisibility(View.INVISIBLE);
 			if ((result==null) || (result.length()==0))
 			{
 				mAlertDialogFailure.show();
@@ -69,7 +69,7 @@ public class CreatePoll extends Activity {
 	AlertDialog mAlertDialogSuccess;
 	AlertDialog mAlertDialogFailure;
 	
-	ProgressBar mProgressBar;
+	ProgressBar mProgressBarPublish;
 	PostPollTask mPostPollTask;
 	
 	Spinner mSpinnerCategory;
@@ -170,8 +170,7 @@ public class CreatePoll extends Activity {
 										@Override
 										public void onPictureTaken(byte[] data, Camera camera) {
 											bShutter.setVisibility(View.INVISIBLE);
-											progressBarPictureUpload.setVisibility(View.VISIBLE);
-											
+											progressBarPictureUpload.setVisibility(View.VISIBLE);											
 										
 											Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
 											mPoll.ImageUrl = MediaStore.Images.Media.insertImage(getContentResolver(), bmp,
@@ -179,8 +178,6 @@ public class CreatePoll extends Activity {
 											
 											screen = 2;
 											draw();
-											
-											
 								        }								
 									});
 								
@@ -208,8 +205,27 @@ public class CreatePoll extends Activity {
 	
 	private void drawPublishScreen() {
 		
-		createAlertDialogs();
+		//createAlertDialogs();
 		
+		
+		setContentView(R.layout.create_poll_2);
+
+		mProgressBarPublish =  (ProgressBar)findViewById(R.id.progressBarPublish);
+		mProgressBarPublish.setVisibility(View.INVISIBLE);
+
+		mButtonPublish = (Button)findViewById(R.id.buttonPublish);
+		
+		mButtonPublish.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				mProgressBarPublish.setVisibility(View.VISIBLE);
+				mButtonPublish.setEnabled(false);
+				PostPollTask postPollTask = new PostPollTask();
+				postPollTask.execute(mPoll);
+			}
+		});
+
 		
 
 		//mEditTextQuestion = (EditText)findViewById(R.id.editTextQuestion);
