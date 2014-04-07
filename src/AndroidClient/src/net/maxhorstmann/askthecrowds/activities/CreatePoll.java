@@ -205,8 +205,7 @@ public class CreatePoll extends Activity {
 	
 	private void drawPublishScreen() {
 		
-		//createAlertDialogs();
-		
+		createAlertDialogs();		
 		
 		setContentView(R.layout.create_poll_2);
 
