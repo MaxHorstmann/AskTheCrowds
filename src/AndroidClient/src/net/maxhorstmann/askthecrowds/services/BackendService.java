@@ -19,6 +19,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -71,7 +73,11 @@ public class BackendService {
 				ApiResult apiResult = gson.fromJson(EntityUtils.toString(response.getEntity()), ApiResult.class);
 				mLocalStorageService.putUserUuid(apiResult.UserId);				
 				return apiResult.Payload;
+		    } else {
+		    	String error = EntityUtils.toString(response.getEntity());
+		    	Log.d("post", error);
 		    }
+		    
 		}
 		catch (Exception ex)
 		{

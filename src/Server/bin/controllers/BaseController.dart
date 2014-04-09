@@ -30,10 +30,12 @@ abstract class BaseController
   
   void sendServerError(HttpRequest request, [e])
   {
+    request.response.statusCode = 500;
     if (e != null) {
       print(e.toString());
+      request.response.headers.contentType = ContentType.parse("text/plain");
+      request.response.write(e.toString());
     }
-    request.response.statusCode = 500;
     request.response.close();
   }
   
