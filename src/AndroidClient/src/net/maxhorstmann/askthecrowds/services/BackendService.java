@@ -38,7 +38,12 @@ public class BackendService {
 		
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+		// gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer()); <<-- need serializer! http://stackoverflow.com/questions/6873020/gson-date-format
 		gson = gsonBuilder.create();
+		
+		Date dt = new Date();
+		String test = gson.toJson(dt);
+		Log.d("test", test);
 	}
 	
 	public List<Poll> getPolls() {
