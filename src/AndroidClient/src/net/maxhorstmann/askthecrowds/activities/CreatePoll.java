@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -132,6 +133,7 @@ public class CreatePoll extends Activity {
 	
 	
 	private static final int PICK_IMAGE = 1;
+	private static final int TAKE_PICTURE = 2;
 
 	private void drawPhotoScreen() {
 		setContentView(R.layout.create_poll_1);
@@ -141,8 +143,8 @@ public class CreatePoll extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-
-				
+				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				startActivityForResult(intent, TAKE_PICTURE);
 				
 			}
 		});
@@ -152,9 +154,8 @@ public class CreatePoll extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
+				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
-				intent.setAction(Intent.ACTION_GET_CONTENT);
 				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);				
 			}
 		});
