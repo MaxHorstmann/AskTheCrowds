@@ -1,7 +1,5 @@
 package net.maxhorstmann.askthecrowds.activities;
 
-import java.io.IOException;
-
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
@@ -10,15 +8,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.hardware.Camera;
-import android.hardware.Camera.PictureCallback;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.KeyEvent;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -78,9 +71,6 @@ public class CreatePoll extends Activity {
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;		
 	
-	Camera camera;
-	SurfaceView surfaceView;
-	Button bShutter;
 	ProgressBar progressBarPictureUpload;
 	
 	@Override
@@ -140,57 +130,40 @@ public class CreatePoll extends Activity {
 	
 	}
 	
+	
+	private static final int PICK_IMAGE = 1;
+
 	private void drawPhotoScreen() {
 		setContentView(R.layout.create_poll_1);
 		
-		camera = Camera.open();
-		surfaceView = (SurfaceView)findViewById(R.id.surfaceView);
-
 		Button bTakePhoto = (Button)findViewById(R.id.buttonTakePhoto);
-		bShutter = (Button)findViewById(R.id.buttonShutter);
-		bShutter.setVisibility(View.INVISIBLE);
+		bTakePhoto.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+
+				
+				
+			}
+		});
+		
+		Button bPickFromGallery = (Button)findViewById(R.id.buttonPickFromGallery);
+		bPickFromGallery.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setType("image/*");
+				intent.setAction(Intent.ACTION_GET_CONTENT);
+				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);				
+			}
+		});
+		
 		
 		progressBarPictureUpload = (ProgressBar)findViewById(R.id.progressBarPictureUpload);
 		progressBarPictureUpload.setVisibility(View.INVISIBLE);
 		
-		if (camera == null) {
-			bTakePhoto.setEnabled(false);
-		} else {
-			bTakePhoto.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					try {
-						camera.setPreviewDisplay(surfaceView.getHolder());
-						camera.startPreview();
-						bShutter.setOnClickListener(new View.OnClickListener() {
-							
-							@Override
-							public void onClick(View v) {
-								camera.takePicture(null, null, new PictureCallback() {
-										@Override
-										public void onPictureTaken(byte[] data, Camera camera) {
-											bShutter.setVisibility(View.INVISIBLE);
-											progressBarPictureUpload.setVisibility(View.VISIBLE);											
-										
-											Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-											mPoll.ImageUrl = MediaStore.Images.Media.insertImage(getContentResolver(), bmp,
-													"newImage" , "");  
-											
-											screen = 2;
-											draw();
-								        }								
-									});
-								
-							}
-						});
-						bShutter.setVisibility(View.VISIBLE);
-					} catch (IOException e) {
-						e.printStackTrace();
-						camera = null;
-					}
-				}
-			} );
-		}
+
 		
 		Button bSkip = (Button)findViewById(R.id.buttonSkipPhoto);
 		bSkip.setOnClickListener(new View.OnClickListener() {
