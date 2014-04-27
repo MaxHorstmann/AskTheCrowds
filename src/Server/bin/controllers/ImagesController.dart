@@ -1,12 +1,7 @@
 library ImagesController;
 
 import 'dart:io';
-//import 'dart:async';
-import 'package:http_server/http_server.dart';
 import "BaseController.dart";
-//import "../models/Models.dart";
-//import "../models/Json.dart";
-//import "../common/Util.dart";
 
 class ImagesController extends BaseController
 {
@@ -16,13 +11,19 @@ class ImagesController extends BaseController
   {
     if (request.method == "POST")  
     {
-      // TODO
-      HttpBodyHandler.processRequest(request)
-        .then((HttpBody body) {   
-          var foo = body.body;
-          
-        });
-
+      if ((request.headers.contentType != null) && (request.headers.contentType.mimeType == 'image/jpg'))
+      {
+        var builder = new BytesBuilder();      
+        request.listen((List<int> buffer) => builder.add(buffer),
+            onDone: () =>
+              new File("c:\\images\\test.jpg")
+                .writeAsBytes(builder.takeBytes(), mode: FileMode.WRITE)
+                .then((_) {
+                  request.response.statusCode = HttpStatus.OK;
+                  request.response.close();
+                })
+            );       
+      }
     }
     
     if (request.method == "GET")  
