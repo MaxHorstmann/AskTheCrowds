@@ -1,5 +1,7 @@
 package net.maxhorstmann.askthecrowds.activities;
 
+import java.io.File;
+
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
 import net.maxhorstmann.askthecrowds.services.BackendService;
@@ -9,8 +11,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,6 +22,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -72,12 +77,15 @@ public class CreatePoll extends Activity {
 	BackendService mBackendService;
 	LocalStorageService mLocalStorageService;		
 	
-	ProgressBar progressBarPictureUpload;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		 if (savedInstanceState != null) {
+			 newPhotoFileName = savedInstanceState.getString("newPhotoFileName");
+		 }
+
+		
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
 
@@ -87,6 +95,14 @@ public class CreatePoll extends Activity {
 		screen = 0;
 		draw();				
 	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle bundle)
+	{		
+		super.onSaveInstanceState(bundle);
+		bundle.putString("newPhotoFileName", newPhotoFileName);
+	}
+	
 	
 	private void draw() {
 		
@@ -134,37 +150,39 @@ public class CreatePoll extends Activity {
 	
 	private static final int PICK_IMAGE = 1;
 	private static final int TAKE_PICTURE = 2;
+	
+	// TODO not the right folder, can't find in gallery, but works for now
+	private static final File newPhotosRootFolder 
+		= new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Ask the Crowds Photos");
+	
+	private String newPhotoFileName;
 
 	private void drawPhotoScreen() {
 		setContentView(R.layout.create_poll_1);
 		
 		Button bTakePhoto = (Button)findViewById(R.id.buttonTakePhoto);
-		bTakePhoto.setOnClickListener(new View.OnClickListener() {
-			
+		bTakePhoto.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
+				newPhotosRootFolder.mkdirs();
+				File newPhotoFile = new File(newPhotosRootFolder, "newpoll.jpg");
+				newPhotoFileName = newPhotoFile.getAbsolutePath();
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				startActivityForResult(intent, TAKE_PICTURE);
-				
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(newPhotoFile));
+				startActivityForResult(intent, TAKE_PICTURE);				
 			}
 		});
 		
 		Button bPickFromGallery = (Button)findViewById(R.id.buttonPickFromGallery);
-		bPickFromGallery.setOnClickListener(new View.OnClickListener() {
-			
+		bPickFromGallery.setOnClickListener(new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 				intent.setType("image/*");
-				startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);				
+				startActivityForResult(intent, PICK_IMAGE);				
 			}
-		});
+		});		
 		
-		
-		progressBarPictureUpload = (ProgressBar)findViewById(R.id.progressBarPictureUpload);
-		progressBarPictureUpload.setVisibility(View.INVISIBLE);
-		
-
 		
 		Button bSkip = (Button)findViewById(R.id.buttonSkipPhoto);
 		bSkip.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +194,23 @@ public class CreatePoll extends Activity {
 		} );
 		
 	}
+	
+	@Override 
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if ((requestCode == TAKE_PICTURE) && (resultCode == Activity.RESULT_OK)) {
+			Uri uri = Uri.fromFile(new File(newPhotoFileName));
+			ImageView iv = (ImageView)findViewById(R.id.imageView1);
+			iv.setImageURI(uri);			
+		}
+		
+		if ((requestCode == PICK_IMAGE) && (resultCode == Activity.RESULT_OK) && (data != null)) {
+			Uri uri = data.getData();
+			ImageView iv = (ImageView)findViewById(R.id.imageView1);
+			iv.setImageURI(uri);
+		}
+	}
+	
+
 	
 	private void drawPublishScreen() {
 		

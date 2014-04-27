@@ -23,13 +23,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take new photo" />
-    
+
     <Button
         android:id="@+id/buttonPickFromGallery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Pick from gallery" />
-    
 
     <Button
         android:id="@+id/buttonSkipPhoto"
@@ -38,9 +37,10 @@
         android:text="Skip -->" />
 
 
-    <ProgressBar
-        android:id="@+id/progressBarPictureUpload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="137dp"
+        android:layout_height="178dp"
+        android:src="@drawable/ic_launcher" />
 
 </LinearLayout>
