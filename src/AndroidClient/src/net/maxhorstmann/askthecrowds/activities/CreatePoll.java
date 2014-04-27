@@ -51,7 +51,23 @@ public class CreatePoll extends Activity {
 				mAlertDialogSuccess.show();
 			}
 		}
-	}		
+	}
+	
+	private class PostImageTask extends AsyncTask<Uri, Void, String>
+	{
+		@Override
+		protected String doInBackground(Uri... uris) {
+     		Uri uri = uris[0];
+			return mBackendService.UploadImage(uri);
+		}	
+		
+		@Override 
+		protected void onPostExecute(String result) {
+			mPoll.ImageUrl = result;
+			PostPollTask postPollTask = new PostPollTask();
+			postPollTask.execute(mPoll);
+		}
+	}
 	
 	Poll mPoll;
 	Uri mImageUri;
@@ -228,8 +244,10 @@ public class CreatePoll extends Activity {
 			public void onClick(View v) {
 				mProgressBarPublish.setVisibility(View.VISIBLE);
 				mButtonPublish.setEnabled(false);
-				PostPollTask postPollTask = new PostPollTask();
-				postPollTask.execute(mPoll);
+				
+				PostImageTask postImageTask = new PostImageTask();
+				postImageTask.execute(mImageUri);				
+
 			}
 		});
 

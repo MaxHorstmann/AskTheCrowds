@@ -14,7 +14,9 @@ class ImagesController extends BaseController
       if ((request.headers.contentType != null) && (request.headers.contentType.mimeType == 'image/jpg'))
       {
         var builder = new BytesBuilder();      
-        request.listen((List<int> buffer) => builder.add(buffer),
+        request.listen((List<int> buffer) { 
+          builder.add(buffer);
+          },
             onDone: () =>
               new File("c:\\images\\test.jpg")
                 .writeAsBytes(builder.takeBytes(), mode: FileMode.WRITE)
@@ -22,7 +24,9 @@ class ImagesController extends BaseController
                   request.response.statusCode = HttpStatus.OK;
                   request.response.close();
                 })
-            );       
+            );    
+        
+        return true;
       }
     }
     

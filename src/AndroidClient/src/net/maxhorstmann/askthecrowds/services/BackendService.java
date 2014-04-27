@@ -1,5 +1,7 @@
 package net.maxhorstmann.askthecrowds.services;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,11 +16,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -26,7 +30,7 @@ import com.google.gson.GsonBuilder;
 
 public class BackendService {
 	
-	//private final String baseUrl = "http://192.168.1.2/api";
+	//private final String baseUrl = "http://192.168.1.4:8977/api";
 	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
 	private final int httpConnectionTimeout = 5000;
 	
@@ -69,7 +73,6 @@ public class BackendService {
 		try 
 		{
      		poll.UserId = mLocalStorageService.getUserUuid();
-     		UploadImage(poll);
      		poll.Created = new Date();
      		String json = gson.toJson(poll);
 			HttpPost post = getHttpPost("polls", json);
@@ -92,12 +95,24 @@ public class BackendService {
 		return null;		
 	}
 	
-	// Upload poll image to imgur and replace URL
-	public void UploadImage(Poll poll) {
-		if ((poll.ImageUrl == null) || (poll.ImageUrl.length() == 0)) return;
+	public String UploadImage(Uri imageUri) {
+		if (imageUri == null) return null;		
 		
+		File file = new File(imageUri.getPath());
 		
-		
+		InputStreamEntity reqEntity;
+		try {
+			reqEntity = new InputStreamEntity(new FileInputStream(file), -1);
+		    reqEntity.setContentType("image/jpg");
+			HttpPost post = new HttpPost(baseUrl + "/img");
+			post.setEntity(reqEntity);
+		    HttpResponse response = getHttpClient().execute(post);
+		    return response.toString();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}	
 		
 	}
 	
@@ -137,6 +152,7 @@ public class BackendService {
 			return null;
 		}
 	}
+	
 	
 	private HttpClient getHttpClient()
 	{
