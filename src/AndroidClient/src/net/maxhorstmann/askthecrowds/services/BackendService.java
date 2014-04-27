@@ -69,6 +69,7 @@ public class BackendService {
 		try 
 		{
      		poll.UserId = mLocalStorageService.getUserUuid();
+     		UploadImage(poll);
      		poll.Created = new Date();
      		String json = gson.toJson(poll);
 			HttpPost post = getHttpPost("polls", json);
@@ -89,6 +90,15 @@ public class BackendService {
 			ex.printStackTrace();
 		}		
 		return null;		
+	}
+	
+	// Upload poll image to imgur and replace URL
+	public void UploadImage(Poll poll) {
+		if ((poll.ImageUrl == null) || (poll.ImageUrl.length() == 0)) return;
+		
+		
+		
+		
 	}
 	
 	public boolean postVote(Vote vote) {
