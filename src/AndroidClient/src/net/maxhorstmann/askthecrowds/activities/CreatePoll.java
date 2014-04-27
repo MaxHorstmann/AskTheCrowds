@@ -57,6 +57,7 @@ public class CreatePoll extends Activity {
 	
 	
 	Poll mPoll;
+	Uri mImageUri;
 	int screen = 0;
 	
 	Button mButtonPublish;
@@ -83,16 +84,17 @@ public class CreatePoll extends Activity {
 
 		 if (savedInstanceState != null) {
 			 newPhotoFileName = savedInstanceState.getString("newPhotoFileName");
+			 screen = savedInstanceState.getInt("screen");
+			 //mPoll = savedInstanceState.getString("mPoll);  <-- TODO deserialize
 		 }
-
+		 else {
+				mPoll = new Poll();
+				screen = 0;
+		 }
 		
 		mLocalStorageService = new LocalStorageService(this);
 		mBackendService = new BackendService(mLocalStorageService);
-
-		mPoll = new Poll();
 		
-		
-		screen = 0;
 		draw();				
 	}
 	
@@ -143,8 +145,6 @@ public class CreatePoll extends Activity {
 		mEditTextQuestion.requestFocus();
 		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 	    imm.showSoftInput(mEditTextQuestion, 0); // hmmm doesn't work... 
-		
-	
 	}
 	
 	
@@ -198,25 +198,27 @@ public class CreatePoll extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ((requestCode == TAKE_PICTURE) && (resultCode == Activity.RESULT_OK)) {
-			Uri uri = Uri.fromFile(new File(newPhotoFileName));
-			ImageView iv = (ImageView)findViewById(R.id.imageView1);
-			iv.setImageURI(uri);			
+			mImageUri = Uri.fromFile(new File(newPhotoFileName));
 		}
 		
 		if ((requestCode == PICK_IMAGE) && (resultCode == Activity.RESULT_OK) && (data != null)) {
-			Uri uri = data.getData();
-			ImageView iv = (ImageView)findViewById(R.id.imageView1);
-			iv.setImageURI(uri);
+			mImageUri = data.getData();
+		}
+		
+		if (mImageUri != null) {
+			screen = 2;
+			draw();
 		}
 	}
-	
-
-	
+		
 	private void drawPublishScreen() {
 		
 		createAlertDialogs();		
 		
 		setContentView(R.layout.create_poll_2);
+		
+		ImageView iv = (ImageView)findViewById(R.id.imageViewThumbnail);
+		iv.setImageURI(mImageUri);
 
 		mProgressBarPublish =  (ProgressBar)findViewById(R.id.progressBarPublish);
 		mProgressBarPublish.setVisibility(View.INVISIBLE);
