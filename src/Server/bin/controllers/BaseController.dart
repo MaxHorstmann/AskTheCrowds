@@ -7,19 +7,19 @@ abstract class BaseController
 {
   
 
-  void sendContent(HttpRequest request, String content, [ int statusCode = 200 ])
+  void sendContent(HttpRequest request, String content, [ int statusCode = HttpStatus.OK ])
   {
     request.response.statusCode = statusCode;
     request.response.write(content);
     request.response.close();
   }
   
-  void sendJson(HttpRequest request, Object payload, [ int statusCode = 200 ])
+  void sendJson(HttpRequest request, Object payload, [ int statusCode = HttpStatus.OK ])
   {
     sendJsonRaw(request,JSON.encode(payload),statusCode);
   }  
   
-  void sendJsonRaw(HttpRequest request, String json, [ int statusCode = 200 ])
+  void sendJsonRaw(HttpRequest request, String json, [ int statusCode = HttpStatus.OK ])
   {
     request.response.statusCode = statusCode;
     request.response.headers.contentType = ContentType.parse("text/json");
@@ -30,7 +30,7 @@ abstract class BaseController
   
   void sendServerError(HttpRequest request, [e])
   {
-    request.response.statusCode = 500;
+    request.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
     if (e != null) {
       print(e.toString());
       request.response.headers.contentType = ContentType.parse("text/plain");

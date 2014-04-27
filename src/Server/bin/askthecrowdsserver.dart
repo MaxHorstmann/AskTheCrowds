@@ -2,19 +2,21 @@ import 'dart:io';
 import "controllers/HomeController.dart";
 import "controllers/ApiController.dart";
 import "controllers/AdminController.dart";
+import "controllers/ImagesController.dart";
 
 typedef bool Handler(HttpRequest request);
 
 void main() {
   
   
-  HttpServer.bind(InternetAddress.ANY_IP_V4, 80)
+  HttpServer.bind(InternetAddress.ANY_IP_V4, 8977)
     .then((HttpServer server) {
     
     var routeTable = new Map<String, Handler>();    
     var homeController = new HomeController();
     var apiController = new ApiController();
     var adminController = new AdminController();
+    var imagesController = new ImagesController();
     
     routeTable["/"] = homeController.Index;
     routeTable["/pingdom"] = homeController.Pingdom;
@@ -23,8 +25,10 @@ void main() {
     routeTable["/addTestData"] = adminController.AddTestData;
     routeTable["/api/polls"] = apiController.Polls;
     routeTable["/api/votes"] = apiController.Votes;
-    
+    routeTable["/img"] = imagesController.Index;
+        
     server.listen((HttpRequest request) {
+      
       try
       {
         var now = new DateTime.now();
