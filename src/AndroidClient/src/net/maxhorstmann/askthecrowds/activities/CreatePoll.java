@@ -51,14 +51,11 @@ public class CreatePoll extends Activity {
 				mAlertDialogSuccess.show();
 			}
 		}
-	}
-	
-	
-	
+	}		
 	
 	Poll mPoll;
 	Uri mImageUri;
-	int screen = 0;
+	int mScreen = 0;
 	
 	Button mButtonPublish;
 	EditText mEditTextQuestion;
@@ -84,12 +81,12 @@ public class CreatePoll extends Activity {
 
 		 if (savedInstanceState != null) {
 			 newPhotoFileName = savedInstanceState.getString("newPhotoFileName");
-			 screen = savedInstanceState.getInt("screen");
+			 mScreen = savedInstanceState.getInt("screen");
 			 //mPoll = savedInstanceState.getString("mPoll);  <-- TODO deserialize
 		 }
 		 else {
 				mPoll = new Poll();
-				screen = 0;
+				mScreen = 0;
 		 }
 		
 		mLocalStorageService = new LocalStorageService(this);
@@ -108,7 +105,7 @@ public class CreatePoll extends Activity {
 	
 	private void draw() {
 		
-		switch (screen)
+		switch (mScreen)
 		{
 			case 0: drawQuestionScreen(); break;
 			case 1: drawPhotoScreen(); break;
@@ -133,7 +130,7 @@ public class CreatePoll extends Activity {
 		        		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		        	    imm.hideSoftInputFromWindow(mEditTextQuestion.getWindowToken(), 0);
 		        		
-			            screen=1;
+			            mScreen=1;
 			            draw();
 			            handled = true;
 		        	}
@@ -188,7 +185,7 @@ public class CreatePoll extends Activity {
 		bSkip.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				screen=2;
+				mScreen=2;
 				draw();
 			}
 		} );
@@ -206,7 +203,7 @@ public class CreatePoll extends Activity {
 		}
 		
 		if (mImageUri != null) {
-			screen = 2;
+			mScreen = 2;
 			draw();
 		}
 	}
