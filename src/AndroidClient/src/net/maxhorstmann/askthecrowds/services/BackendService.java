@@ -107,7 +107,11 @@ public class BackendService {
 			HttpPost post = new HttpPost(baseUrl + "/img");
 			post.setEntity(reqEntity);
 		    HttpResponse response = getHttpClient().execute(post);
-		    return response.toString();
+		    if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				String uuid = gson.fromJson(EntityUtils.toString(response.getEntity()), String.class);
+				return baseUrl + "/img?uuid=" + uuid;
+		    }
+		    return null;
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
