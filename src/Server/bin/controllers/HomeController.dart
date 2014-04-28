@@ -10,7 +10,7 @@ class HomeController extends BaseController
   // Route = '/'
   bool Index(HttpRequest request)
   {
-    sendContent(request, "Ask the Crowds server. 4/26/2014");
+    sendContent(request, "Ask the Crowds server. 4/27/2014 imgfolder");
     return true;
   }
 
