@@ -3,7 +3,6 @@ library Db;
 import "package:redis_client/redis_client.dart";
 import 'dart:async';
 import 'dart:mirrors';
-import "package:uuid/uuid.dart";
 import '../common/Config.dart';
 import 'Serializable.dart';
 import 'Json.dart';
@@ -14,8 +13,6 @@ import 'Json.dart';
 
 class Db<T extends Serializable>
 {  
-  static Uuid _uuid = new Uuid();  
-
   String _entityName;
   Json<T> _json;
   
