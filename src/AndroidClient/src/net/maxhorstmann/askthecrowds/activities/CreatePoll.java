@@ -1,6 +1,7 @@
 package net.maxhorstmann.askthecrowds.activities;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import net.maxhorstmann.askthecrowds.R;
 import net.maxhorstmann.askthecrowds.models.Poll;
@@ -47,7 +48,7 @@ public class CreatePoll extends Activity {
 			}
 			else
 			{
-				mLocalStorageService.addMyPollId(result);
+				//mLocalStorageService.addMyPollId(result);
 				mAlertDialogSuccess.show();
 			}
 		}
@@ -102,6 +103,11 @@ public class CreatePoll extends Activity {
 		 }
 		 else {
 				mPoll = new Poll();
+				mPoll.DurationHours = 24; // default   TODO prompt user
+				mPoll.TypeId = 1; // default   TODO prompt user
+				mPoll.Options = new ArrayList<String>();
+				mPoll.Options.add("Option A");
+				mPoll.Options.add("Option B");
 				mScreen = 0;
 		 }
 		

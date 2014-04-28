@@ -30,8 +30,8 @@ import com.google.gson.GsonBuilder;
 
 public class BackendService {
 	
-	private final String baseUrl = "http://192.168.1.4:8977/api";
-	//private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
+	//private final String baseUrl = "http://192.168.1.4:8977/api";
+	private final String baseUrl = "http://askthecrowds.cloudapp.net/api";
 	private final int httpConnectionTimeout = 5000;
 	
 	private Gson gson;
