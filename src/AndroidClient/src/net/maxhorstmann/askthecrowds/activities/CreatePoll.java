@@ -1,6 +1,7 @@
 package net.maxhorstmann.askthecrowds.activities;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import net.maxhorstmann.askthecrowds.R;
@@ -12,6 +13,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -217,6 +220,8 @@ public class CreatePoll extends Activity {
 	@Override 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if ((requestCode == TAKE_PICTURE) && (resultCode == Activity.RESULT_OK)) {
+			ResizeImage(newPhotoFileName);
+			
 			mImageUri = Uri.fromFile(new File(newPhotoFileName));
 		}
 		
@@ -228,6 +233,30 @@ public class CreatePoll extends Activity {
 			mScreen = 2;
 			draw();
 		}
+	}
+	
+	private void ResizeImage(String filename) {
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+		Bitmap bitmap = BitmapFactory.decodeFile(filename, options);
+				
+		// TODO scale right etc.
+		Bitmap bitmap_scaled = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+		
+		FileOutputStream out = null;
+		try {
+		       out = new FileOutputStream(filename);
+		       bitmap_scaled.compress(Bitmap.CompressFormat.JPEG, 90, out);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		} finally {
+		       try{
+		           out.close();
+		       } catch(Throwable ignore) {}
+		}
+		
+		
+		
 	}
 		
 	private void drawPublishScreen() {

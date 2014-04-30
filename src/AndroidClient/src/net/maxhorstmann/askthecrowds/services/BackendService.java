@@ -93,7 +93,8 @@ public class BackendService {
 	public String UploadImage(Uri imageUri) {
 		if (imageUri == null) return null;		
 		
-		File file = new File(imageUri.getPath());
+		String filePath = imageUri.getPath();
+		File file = new File(filePath);
 		
 		InputStreamEntity reqEntity;
 		try {
